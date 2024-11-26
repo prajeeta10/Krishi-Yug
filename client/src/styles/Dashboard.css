@@ -1,0 +1,42 @@
+.dashboard-page {
+    text-align: center;
+    margin: 20px auto;
+}
+
+.dashboard-info {
+    margin: 20px auto;
+    max-width: 600px;
+    text-align: left;
+    font-size: 1.2rem;
+    line-height: 1.8;
+}
+
+.dashboard-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin: 10px;
+}
+
+.dashboard-logout {
+    padding: 10px 20px;
+    background-color: #ff4c4c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin: 10px;
+}
+
+.dashboard-button:hover {
+    background-color: #45a049;
+}
+
+.dashboard-logout:hover {
+    background-color: #d32f2f;
+}
