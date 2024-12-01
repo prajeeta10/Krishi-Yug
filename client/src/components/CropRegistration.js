@@ -1,9 +1,12 @@
+//CropRegistration
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
 import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
-import PopupMessage from "./PopupMessage";
-import "../styles/Dashboard.css";
+import "../styles/Login.css";
+import Layout from './Layout';
+
+const INR_TO_ETH_CONVERSION_RATE = 0.000012; // Sample conversion rate; adjust as needed
 
 const CropRegistration = () => {
     const [cropDetails, setCropDetails] = useState({
@@ -14,14 +17,13 @@ const CropRegistration = () => {
         additionalInfo: "",
     });
     const [loading, setLoading] = useState(false);
-    const [popup, setPopup] = useState(null);
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
         const { name, location, harvestTime, price, additionalInfo } = cropDetails;
 
         if (!name || !location || !harvestTime || !price) {
-            setPopup({ message: "Please fill all required fields.", type: "error" });
+            alert("Please fill all required fields.");
             return;
         }
 
@@ -42,84 +44,52 @@ const CropRegistration = () => {
                 throw new Error("Smart contract not deployed on this network.");
             }
 
-            const contract = new web3.eth.Contract(
-                AgriSupplyChain.abi,
-                deployedNetwork.address
-            );
+            const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
+
+            // Convert price from INR to ETH
+            const priceInETH = web3.utils.toWei((price * INR_TO_ETH_CONVERSION_RATE).toString(), 'ether');
 
             // Register crop
             await contract.methods
-                .registerCrop(name, location, parseInt(harvestTime), parseInt(price), additionalInfo)
+                .registerCrop(name, location, parseInt(harvestTime), priceInETH, additionalInfo)
                 .send({ from: accounts[0] });
 
-            setPopup({ message: "Crop registered successfully!", type: "success" });
+            alert("Crop registered successfully!");
             setTimeout(() => navigate("/farmer-dashboard"), 1500);
         } catch (error) {
             console.error(error);
-            setPopup({
-                message: error.message || "Error during crop registration.",
-                type: "error",
-            });
+            alert(error.message || "Error during crop registration.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="dashboard-page">
-            {popup && (
-                <PopupMessage
-                    message={popup.message}
-                    type={popup.type}
-                    onClose={() => setPopup(null)}
-                />
-            )}
-            <h1>Crop Registration</h1>
-            <div className="dashboard-form">
-                <input
-                    type="text"
-                    placeholder="Crop Name"
-                    value={cropDetails.name}
-                    onChange={(e) =>
-                        setCropDetails({ ...cropDetails, name: e.target.value })
-                    }
-                />
-                <input
-                    type="text"
-                    placeholder="Location"
-                    value={cropDetails.location}
-                    onChange={(e) =>
-                        setCropDetails({ ...cropDetails, location: e.target.value })
-                    }
-                />
-                <input
-                    type="number"
-                    placeholder="Time Required (in days)"
-                    value={cropDetails.harvestTime}
-                    onChange={(e) =>
-                        setCropDetails({ ...cropDetails, harvestTime: e.target.value })
-                    }
-                />
-                <input
-                    type="number"
-                    placeholder="Price (in ETH)"
-                    value={cropDetails.price}
-                    onChange={(e) =>
-                        setCropDetails({ ...cropDetails, price: e.target.value })
-                    }
-                />
-                <textarea
-                    placeholder="Additional Info"
-                    value={cropDetails.additionalInfo}
-                    onChange={(e) =>
-                        setCropDetails({ ...cropDetails, additionalInfo: e.target.value })
-                    }
-                ></textarea>
-                <button onClick={handleSubmit} disabled={loading}>
-                    {loading ? "Submitting..." : "Submit"}
-                </button>
+        <Layout>
+            <div className="dashboard-page">
+                <h1>Register Your Harvest🌶️</h1>
+                <form>
+                    <label>Name:</label>
+                    <input type="text" value={cropDetails.name} onChange={(e) => setCropDetails({ ...cropDetails, name: e.target.value })} />
+
+                    <label>Location:</label>
+                    <input type="text" value={cropDetails.location} onChange={(e) => setCropDetails({ ...cropDetails, location: e.target.value })} />
+
+                    <label>Harvest Time (in days):</label>
+                    <input type="number" value={cropDetails.harvestTime} onChange={(e) => setCropDetails({ ...cropDetails, harvestTime: e.target.value })} />
+
+                    <label>Price (in INR):</label>
+                    <input type="number" value={cropDetails.price} onChange={(e) => setCropDetails({ ...cropDetails, price: e.target.value })} />
+
+                    <label>Additional Info:</label>
+                    <input type="text" value={cropDetails.additionalInfo} onChange={(e) => setCropDetails({ ...cropDetails, additionalInfo: e.target.value })} />
+
+                    <button type="button" onClick={handleSubmit} disabled={loading}>
+                        {loading ? "Registering..." : "Register Crop"}
+                    </button>
+                </form>
             </div>
-        </div>
+        </Layout>
     );
 };
 

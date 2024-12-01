@@ -1,20 +1,20 @@
+//CustomerLogin.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
 import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
-import PopupMessage from "./PopupMessage";
 import "../styles/Login.css";
+import Layout from "./Layout";
 
 const CustomerLogin = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    const [popup, setPopup] = useState(null);
     const navigate = useNavigate();
 
     const handleLogin = async () => {
         if (!username || !password) {
-            setPopup({ message: "Please fill all fields.", type: "error" });
+            alert("Please fill all fields.");
             return;
         }
 
@@ -45,32 +45,23 @@ const CustomerLogin = () => {
                 .call({ from: accounts[0] });
 
             if (isLoggedIn) {
-                setPopup({ message: "Login successful!", type: "success" });
+               
                 setTimeout(() => navigate("/customer-dashboard"), 1500);
             } else {
-                setPopup({ message: "Invalid username or password.", type: "error" });
+                alert("Invalid username or password.");
             }
         } catch (error) {
             console.error(error);
-            setPopup({
-                message: error.message || "Error during login.",
-                type: "error",
-            });
+            alert(error.message || "Error during login.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
+        <Layout>
         <div className="login-page">
-            {popup && (
-                <PopupMessage
-                    message={popup.message}
-                    type={popup.type}
-                    onClose={() => setPopup(null)}
-                />
-            )}
-            <h1>Customer Login</h1>
+            <h1>Customer Login🤵🏻‍♂️</h1>
             <div className="login-form">
                 <input
                     type="text"
@@ -95,6 +86,7 @@ const CustomerLogin = () => {
                 </p>
             </div>
         </div>
+        </Layout>
     );
 };
 

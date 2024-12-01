@@ -1,46 +1,132 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-}
+/* Updated HomePage Styles with Custom Color Palette */
 
-.homepage {
-    text-align: center;
-    color: #333;
-}
-
-.homepage-header {
-    background-color: #4CAF50;
-    color: white;
+.home-page-container {
     padding: 20px;
+    text-align: center;
+    background-color: #E0FBE2; /* Light greenish background */
+    border: none;
+   
 }
 
-.homepage-header h1 {
-    font-size: 2.5rem;
-    margin: 0;
+.hero-title {
+    color: #2c6e49; /* Deep green */
+    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 2rem;
+}
+
+.explore-button {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    background-color: #BFF6C3; /* Soft green for buttons */
+    color: #2c6e49; /* Complementary deep green text */
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.explore-button:hover {
+    background-color: #B0EBB4; /* Slightly darker green for hover */
+}
+
+.crop-image {
+    width: 60%;
+    height: auto;
+}
+
+.features-section {
+    margin-top: 40px;
+}
+
+.feature-card {
+    background-color: #BFF6C3; /* Light green from your palette */
+    color: #2C6E49; /* Deep green text */
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    background-color: #ACE1AF; /* Slightly darker green on hover */
+}
+
+
+.feature-icon {
+    font-size: 3rem;
+    color: #2c6e49; /* Deep green */
+    margin-bottom: 15px;
+}
+
+.feature-title {
+    color: #2c6e49; /* Deep green */
+    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5rem;
+}
+
+.home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.site-title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #2c6e49; /* Deep green */
 }
 
 .login-button {
     padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
+    background-color: #BFF6C3; /* Button in soft green */
+    color: #2c6e49; /* Deep green text */
     border: none;
-    border-radius: 5px;
-    font-size: 1rem;
+    border-radius: 10px;
     cursor: pointer;
+    font-size: 2rem;
+    transition: background-color 0.3s ease;
 }
 
 .login-button:hover {
-    background-color: #0056b3;
+    background-color: #B0EBB4; /* Darker green on hover */
 }
 
-main {
-    margin: 20px auto;
-    max-width: 600px;
+.info-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
 }
 
-footer {
+.card {
+    background-color: #B0EBB4; /* Card background */
+    border: none;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 200px;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #2c6e49; /* Icon deep green */
+}
+
+.main-content {
     margin-top: 20px;
-    font-size: 0.9rem;
-    color: #666;
+    font-family: 'Roboto', sans-serif;
+    color: #2c6e49; /* Deep green */
 }

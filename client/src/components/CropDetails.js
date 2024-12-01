@@ -1,14 +1,17 @@
+//CropDetails.js
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Web3 from "web3";
 import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
-import PopupMessage from "./PopupMessage";
-import "../styles/CropDetails.css";
+import "../styles/Dashboard.css";
+import Layout from './Layout';
+
+const ETH_TO_INR_CONVERSION_RATE = 800000; // Sample conversion rate; adjust as needed
 
 const CropDetails = () => {
+    const [crop, setCrop] = useState({});
+    const navigate = useNavigate();
     const { id } = useParams();
-    const [crop, setCrop] = useState(null);
-    const [popup, setPopup] = useState(null);
 
     const loadCropDetails = async () => {
         try {
@@ -17,7 +20,6 @@ const CropDetails = () => {
             }
 
             const web3 = new Web3(window.ethereum);
-
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = AgriSupplyChain.networks[networkId];
 
@@ -25,19 +27,21 @@ const CropDetails = () => {
                 throw new Error("Smart contract not deployed on this network.");
             }
 
-            const contract = new web3.eth.Contract(
-                AgriSupplyChain.abi,
-                deployedNetwork.address
-            );
+            const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
 
-            const cropData = await contract.methods.getCrop(id).call();
-            setCrop(cropData);
+            const fetchedCrop = await contract.methods.getCrop(id).call();
+
+            // Convert price from ETH to INR
+            const priceInEth = web3.utils.fromWei(fetchedCrop.price.toString(), 'ether');
+            const priceInINR = (priceInEth * ETH_TO_INR_CONVERSION_RATE).toFixed(2);
+
+            setCrop({
+                ...fetchedCrop,
+                price: priceInINR, // Display price in INR
+            });
         } catch (error) {
             console.error(error);
-            setPopup({
-                message: error.message || "Error loading crop details.",
-                type: "error",
-            });
+            alert(error.message || "Error loading crop details.");
         }
     };
 
@@ -46,26 +50,19 @@ const CropDetails = () => {
     }, [id]);
 
     return (
-        <div className="crop-details-page">
-            {popup && (
-                <PopupMessage
-                    message={popup.message}
-                    type={popup.type}
-                    onClose={() => setPopup(null)}
-                />
-            )}
-            {crop ? (
-                <div>
-                    <h1>{crop.name}</h1>
-                    <p><strong>Location:</strong> {crop.location}</p>
-                    <p><strong>Harvest Time:</strong> {crop.harvestTime} days</p>
-                    <p><strong>Price:</strong> {crop.price} ETH</p>
-                    <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
-                </div>
-            ) : (
-                <p>Loading crop details...</p>
-            )}
-        </div>
+        <Layout>
+            <div className="crop-details-page">
+                <h1>Crop Details</h1>
+                <p><strong>Name:</strong> {crop.name}</p>
+                <p><strong>Location:</strong> {crop.location}</p>
+                <p><strong>Price:</strong> ₹{crop.price}</p>
+                <p><strong>Harvest Time:</strong> {crop.harvestTime} days</p>
+                <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
+                <button onClick={() => navigate("/customer-dashboard")}>
+                    Back to Dashboard
+                </button>
+            </div>
+        </Layout>
     );
 };
 

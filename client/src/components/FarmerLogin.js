@@ -3,19 +3,18 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
 import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
-import PopupMessage from "./PopupMessage";
 import "../styles/Login.css";
+import Layout from "./Layout";
 
 const FarmerLogin = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    const [popup, setPopup] = useState(null);
     const navigate = useNavigate();
 
     const handleLogin = async () => {
         if (!username || !password) {
-            setPopup({ message: "Please fill all fields.", type: "error" });
+            alert("Please fill all fields.");
             return;
         }
 
@@ -41,41 +40,28 @@ const FarmerLogin = () => {
                 deployedNetwork.address
             );
 
-            console.log("Logging in with username:", username);
-            console.log("Password:", password);
-            console.log("Wallet Address:", accounts[0]);
-
             const isLoggedIn = await contract.methods
                 .loginFarmer(username, password)
                 .call({ from: accounts[0], gas: 6721975 });
 
             if (isLoggedIn) {
-                setPopup({ message: "Login successful!", type: "success" });
-                setTimeout(() => navigate("/farmer-dashboard"), 1500);
+                alert("Login successful!");
+                navigate("/farmer-dashboard");
             } else {
-                setPopup({ message: "Invalid username or password.", type: "error" });
+                alert("Invalid username or password.");
             }
         } catch (error) {
             console.error("Error during login:", error);
-            setPopup({
-                message: error.message || "An error occurred during login.",
-                type: "error",
-            });
+            alert(error.message || "An error occurred during login.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
+        <Layout>
         <div className="login-page">
-            {popup && (
-                <PopupMessage
-                    message={popup.message}
-                    type={popup.type}
-                    onClose={() => setPopup(null)}
-                />
-            )}
-            <h1>Farmer Login</h1>
+            <h1>Farmer Login🧑🏻‍🌾</h1>
             <div className="login-form">
                 <input
                     type="text"
@@ -100,7 +86,8 @@ const FarmerLogin = () => {
                 </p>
             </div>
         </div>
+        </Layout>
     );
 };
 
-export default FarmerLogin;
+export default FarmerLogin

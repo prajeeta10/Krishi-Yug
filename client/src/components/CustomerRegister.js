@@ -1,21 +1,21 @@
+//CustomerRegistration.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
 import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
-import PopupMessage from "./PopupMessage";
 import "../styles/Login.css";
+import Layout from "./Layout";
 
 const CustomerRegister = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
-    const [popup, setPopup] = useState(null);
     const navigate = useNavigate();
 
     const handleRegister = async () => {
         if (!username || !password || !name) {
-            setPopup({ message: "Please fill all fields.", type: "error" });
+            alert("Please fill all fields.");
             return;
         }
 
@@ -46,29 +46,20 @@ const CustomerRegister = () => {
                 .registerCustomer(username, password, name)
                 .send({ from: accounts[0] });
 
-            setPopup({ message: "Registration successful! Redirecting to login...", type: "success" });
+            alert("Registration successful! Redirecting to login...");
             setTimeout(() => navigate("/customer-login"), 1500);
         } catch (error) {
             console.error(error);
-            setPopup({
-                message: error.message || "Error during registration.",
-                type: "error",
-            });
+            alert(error.message || "Error during registration.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
+        <Layout>
         <div className="login-page">
-            {popup && (
-                <PopupMessage
-                    message={popup.message}
-                    type={popup.type}
-                    onClose={() => setPopup(null)}
-                />
-            )}
-            <h1>Customer Registration</h1>
+            <h1>Customer Registration🤵🏻‍♂️</h1>
             <div className="login-form">
                 <input
                     type="text"
@@ -99,6 +90,7 @@ const CustomerRegister = () => {
                 </p>
             </div>
         </div>
+        </Layout>
     );
 };
 

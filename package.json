@@ -5,6 +5,6 @@
     "truffle": "^5.11.5"
   },
   "scripts": {
-    "postdeploy": "cp build/contracts/AgriSupplyChain.json client/src/contracts/AgriSupplyChain.json"
+   "postdeploy": "node copy-contract.js"
   }
 }

@@ -1,75 +1,74 @@
-//farmerregister.js
+//FarmerRegistration.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
 import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
-import PopupMessage from "./PopupMessage";
 import "../styles/Login.css";
+import Layout from "./Layout";
 
 const FarmerRegister = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
-    const [popup, setPopup] = useState(null);
     const navigate = useNavigate();
 
     const handleRegister = async () => {
         if (!username || !password || !name) {
-            setPopup({ message: "Please fill all fields.", type: "error" });
+            alert("Please fill all fields.");
             return;
         }
 
         setLoading(true);
-
         try {
             if (!window.ethereum) {
                 throw new Error("MetaMask not detected. Please install it.");
             }
-
+    
+            // Reinitialize Web3 to ensure it is properly set up
             const web3 = new Web3(window.ethereum);
-            const accounts = await web3.eth.requestAccounts();
-
+    
+            // Request the user accounts
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const accounts = await web3.eth.getAccounts();
+    
+            // Get the network ID
             const networkId = await web3.eth.net.getId();
+    
+            // Get the deployed contract address
             const deployedNetwork = AgriSupplyChain.networks[networkId];
-
             if (!deployedNetwork) {
                 throw new Error("Smart contract not deployed on this network.");
             }
-
-            const contract = new web3.eth.Contract(
-                AgriSupplyChain.abi,
-                deployedNetwork.address
-            );
-
-            // Register farmer
+    
+            // Create the contract instance
+            const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
+    
+            console.log("Attempting to register farmer...");
+            // Send the transaction to the smart contract
             await contract.methods
                 .registerFarmer(username, password, name)
-                .send({ from: accounts[0] });
-
-            setPopup({ message: "Registration successful! Redirecting to login...", type: "success" });
-            setTimeout(() => navigate("/farmer-login"), 1500);
+                .send({ from: accounts[0], gas: 3000000 });
+    
+            console.log("Farmer registered successfully!");
+    
+            // Navigate to the login page after successful registration
+            navigate("/farmer-login");
         } catch (error) {
-            console.error(error);
-            setPopup({
-                message: error.message || "Error during registration.",
-                type: "error",
-            });
+            console.error("Registration Error:", error);
+            if (error.message.includes("internal JSON-RPC error")) {
+                alert("An internal error occurred. Please check your MetaMask connection or try again later.");
+            }
         } finally {
             setLoading(false);
         }
     };
+    
 
     return (
+        <Layout>
         <div className="login-page">
-            {popup && (
-                <PopupMessage
-                    message={popup.message}
-                    type={popup.type}
-                    onClose={() => setPopup(null)}
-                />
-            )}
-            <h1>Farmer Registration</h1>
+            <h1>Farmer Registration🧑🏻‍🌾</h1>
             <div className="login-form">
                 <input
                     type="text"
@@ -100,6 +99,7 @@ const FarmerRegister = () => {
                 </p>
             </div>
         </div>
+        </Layout>
     );
 };
 

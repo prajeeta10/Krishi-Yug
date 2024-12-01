@@ -1,47 +1,182 @@
-.login-options {
-    text-align: center;
-    margin: 20px auto;
-}
-
-.login-container {
+/* General Page Styling */
+.login-page {
     display: flex;
-    justify-content: space-around;
-    margin: 30px auto;
-    max-width: 800px;
-}
-
-.login-card {
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align content closer to the top */
     padding: 20px;
-    width: 45%;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #E0FBE2; /* Soft green background */
+    font-family: "Roboto", sans-serif;
+    height: auto; /* Adapt height to content */
+    min-height: auto; /* Remove full viewport height constraint */
 }
 
-.login-card h2 {
-    color: #333;
+
+h1 {
+    font-size: 2.5rem;
+    color: #2E7D32; /* Dark green */
+    margin-bottom: 20px;
+    text-align: center;
 }
 
-.login-card button {
-    padding: 10px 20px;
+/* Login Form Container */
+.login-form {
+    background-color: #eafeeb;
+    border: 5px solid #8BC34A;
+    border-radius: 10px;
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-form input {
+    width: 91%;
+    padding: 15px;
+    margin: 15px 0 ;
+    font-size: 1rem;
+    border: 5px solid #8BC34A; /* Light green */
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.login-form input:focus {
+    border-color: #4CAF50; /* Darker green focus */
+}
+
+.login-form button {
+    width: 101%;
+    padding: 15px 20px;
+    margin: 15px 0 ;
     background-color: #4CAF50;
-    color: white;
+    color: #ffffff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
+    transition: background-color 0.3s;
 }
 
-.login-card button:hover {
-    background-color: #45a049;
+.login-form button:hover {
+    background-color: #388E3C; /* Darker green on hover */
+}
+
+.login-form p {
+    font-size: 0.9rem;
+    color: #333;
+    text-align: center;
+    margin-top: 15px;
 }
 
 .register-link {
     color: #007bff;
+    font-weight: bold;
     cursor: pointer;
 }
 
 .register-link:hover {
     text-decoration: underline;
+}
+
+/* Login Options Page */
+.login-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    background-color: #E0FBE2; /* Soft green background */
+    font-family: "Roboto", sans-serif;
+    padding: 20px;
+}
+
+.login-options header h1 {
+    font-size: 2.5rem;
+    color: #2E7D32; /* Dark green */
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+/* Login Cards Container */
+.login-container {
+    display: flex;
+    gap: 70px; /* Space between the cards */
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 900px;
+    padding: 50px;
+    
+
+}
+
+/* Individual Login Card Styling */
+.login-card {
+    flex: 1;
+    max-width: 400px;
+    background-color: #eafeeb;
+    border: 5px solid #8BC34A;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.login-card h2 {
+    font-size: 1.8rem;
+    color: #388E3C; /* Medium green */
+    margin-bottom: 20px;
+}
+
+.login-card button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-card button:hover {
+    background-color: #388E3C; /* Darker green */
+}
+
+.login-card p {
+    font-size: 0.9rem;
+    color: #333;
+    margin-top: 15px;
+}
+
+.register-link {
+    color: #007bff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+/* Card Hover Effect */
+.login-card:hover {
+    transform: translateY(-10px); /* Slight lift */
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .login-card {
+        max-width: 100%;
+    }
 }

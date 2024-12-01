@@ -1,4 +1,3 @@
-//app.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage";
@@ -11,6 +10,7 @@ import CustomerLogin from "./components/CustomerLogin";
 import CustomerRegister from "./components/CustomerRegister";
 import CustomerDashboard from "./components/CustomerDashboard";
 import CropDetails from "./components/CropDetails";
+import Services from "./components/Services"; // Import the Services component
 
 const App = () => {
     return (
@@ -37,6 +37,9 @@ const App = () => {
                 {/* Customer Dashboard and Crop Details */}
                 <Route path="/customer-dashboard" element={<CustomerDashboard />} />
                 <Route path="/crop-details/:id" element={<CropDetails />} />
+
+                {/* Services Page */}
+                <Route path="/services" element={<Services />} /> {/* Add the route for services */}
             </Routes>
         </Router>
     );
