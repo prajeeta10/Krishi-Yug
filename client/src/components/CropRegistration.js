@@ -46,7 +46,7 @@ const CropRegistration = () => {
 
             const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
 
-            // Convert price from INR to ETH
+            // Convert price from INR to ETH for transaction purposes
             const priceInETH = web3.utils.toWei((price * INR_TO_ETH_CONVERSION_RATE).toString(), 'ether');
 
             // Register crop
@@ -67,24 +67,13 @@ const CropRegistration = () => {
     return (
         <Layout>
             <div className="dashboard-page">
-                
                 <h1>Register Your Harvest🌶️</h1>
                 <form className="cropregister-form">
-                    
                     <input type="text" placeholder="Name" value={cropDetails.name} onChange={(e) => setCropDetails({ ...cropDetails, name: e.target.value })} />
-
-                   
                     <input type="text" placeholder="Location" value={cropDetails.location} onChange={(e) => setCropDetails({ ...cropDetails, location: e.target.value })} />
-
-                  
                     <input type="number" placeholder="Harvest Time (Months)" value={cropDetails.harvestTime} onChange={(e) => setCropDetails({ ...cropDetails, harvestTime: e.target.value })} />
-
-                    
                     <input type="number" placeholder="Price (Rs)" value={cropDetails.price} onChange={(e) => setCropDetails({ ...cropDetails, price: e.target.value })} />
-
-                   
                     <input type="text" placeholder="Additional Information" value={cropDetails.additionalInfo} onChange={(e) => setCropDetails({ ...cropDetails, additionalInfo: e.target.value })} />
-
                     <button type="button" onClick={handleSubmit} disabled={loading}>
                         {loading ? "Registering..." : "Register Crop"}
                     </button>

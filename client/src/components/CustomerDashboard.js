@@ -1,4 +1,3 @@
-//CustomerDashboard
 // CustomerDashboard
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,8 +5,6 @@ import Web3 from "web3";
 import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
 import "../styles/Dashboard.css";
 import Layout from './Layout';
-
-const ETH_TO_INR_CONVERSION_RATE = 312721; // Sample conversion rate; adjust as needed
 
 const CustomerDashboard = () => {
     const [crops, setCrops] = useState([]);
@@ -20,7 +17,6 @@ const CustomerDashboard = () => {
             }
     
             const web3 = new Web3(window.ethereum);
-    
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = AgriSupplyChain.networks[networkId];
     
@@ -28,32 +24,24 @@ const CustomerDashboard = () => {
                 throw new Error("Smart contract not deployed on this network.");
             }
     
-            const contract = new web3.eth.Contract(
-                AgriSupplyChain.abi,
-                deployedNetwork.address
-            );
-    
+            const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
             const cropCount = await contract.methods.cropCount().call();
             const loadedCrops = [];
     
             for (let i = 1; i <= cropCount; i++) {
                 const crop = await contract.methods.getCrop(i).call();
-    
-                // Convert price from Wei to ETH
-                const priceInEth = web3.utils.fromWei(crop.price.toString(), 'ether');
-                
-                // Convert ETH to INR for display purposes
-                const priceInINR = (priceInEth * ETH_TO_INR_CONVERSION_RATE).toFixed(2);
-    
+                // Ensure the price is returned directly in INR by the smart contract
+                const priceInINR = crop.price; // No conversion here, assuming the smart contract stores INR
+        
                 loadedCrops.push({
                     ...crop,
-                    price: priceInINR, // Store the price in INR for display
+                    price: priceInINR, // Display price in INR
                 });
             }
     
             setCrops(loadedCrops);
         } catch (error) {
-            console.error(error);
+            console.error("Error loading crops:", error);
             alert("Failed to load crops. Please try again later.");
         }
     };
@@ -76,7 +64,7 @@ const CustomerDashboard = () => {
                                 onClick={() => navigate(`/crop-details/${crop.id}`)}
                             >
                                 <h2>{crop.name}</h2>
-                                <p>Price: ₹{crop.price}</p>
+                                <p>Price: ₹{crop.price}</p> {/* Display price in INR */}
                                 <p>Location: {crop.location}</p>
                             </div>
                         ))

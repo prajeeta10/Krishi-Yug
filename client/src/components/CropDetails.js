@@ -1,4 +1,4 @@
-//CropDetails.js
+// CropDetails.js
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Web3 from "web3";
@@ -9,7 +9,13 @@ import Layout from './Layout';
 const ETH_TO_INR_CONVERSION_RATE = 312721; // Sample conversion rate; adjust as needed
 
 const CropDetails = () => {
-    const [crop, setCrop] = useState({});
+    const [crop, setCrop] = useState({
+        name: "",
+        location: "",
+        price: "Loading...",
+        harvestTime: "",
+        additionalInfo: "",
+    });
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -36,12 +42,15 @@ const CropDetails = () => {
             const priceInINR = (priceInEth * ETH_TO_INR_CONVERSION_RATE).toFixed(2);
 
             setCrop({
-                ...fetchedCrop,
+                name: fetchedCrop.name,
+                location: fetchedCrop.location,
                 price: priceInINR, // Display price in INR
+                harvestTime: fetchedCrop.harvestTime,
+                additionalInfo: fetchedCrop.additionalInfo,
             });
         } catch (error) {
             console.error(error);
-            alert(error.message || "Error loading crop details.");
+            alert("Error loading crop details. Please check your connection or try again later.");
         }
     };
 
