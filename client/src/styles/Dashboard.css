@@ -281,7 +281,7 @@ button:disabled {
 }
 
 /* Purchase Form Styling */
-/* Form Styling */
+
 .purchase-form {
     background-color: #ffffff;
     padding: 20px;
@@ -323,25 +323,40 @@ button:disabled {
     transition: background-color 0.3s ease;
 }
 
-.form-group button:hover {
-    background-color: #218c54;
+.form-buttons {
+    display: flex;
+    gap: 10px; /* Adjust space between the buttons */
 }
 
-.cancel-btn {
-    background-color: #e74c3c;
+.purchase-form .cancel-btn {
+    background-color: rgb(218, 0, 0);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px; /* Optional: for rounded corners */
+    font-size: 16px;
 }
 
-.cancel-btn:hover {
-    background-color: #c0392b;
+
+.purchase-form .cancel-btn:hover {
+    background-color: rgb(165, 1, 1); /* Change on hover */
 }
 
 .confirm-btn {
-    background-color: #27ae60;
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px; /* Optional: for rounded corners */
+    font-size: 16px;
 }
 
 .confirm-btn:hover {
-    background-color: #218c54;
+    background-color: darkgreen; /* Change on hover */
 }
+
 
 /* Status Message */
 p.status-message {

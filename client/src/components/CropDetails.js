@@ -68,17 +68,17 @@ const CropDetails = () => {
 
     const handleCancelPurchase = () => {
         setFormVisible(false);
-        setFormData({
+        setFormData((prevData) => ({
+            ...prevData,
             customerName: '',
             contactInfo: '',
             deliveryAddress: '',
-            cropName: '',
             quantity: 0,
-            pricePerUnit: 0,
             totalPrice: 0,
             termsAccepted: false,
-        });
+        }));
     };
+    
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
