@@ -1,5 +1,5 @@
 //CustomerDashboard
-//CustomerDashboard
+// CustomerDashboard
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
@@ -39,25 +39,25 @@ const CustomerDashboard = () => {
             for (let i = 1; i <= cropCount; i++) {
                 const crop = await contract.methods.getCrop(i).call();
     
-                // Convert price from Wei to ETH if necessary
+                // Convert price from Wei to ETH
                 const priceInEth = web3.utils.fromWei(crop.price.toString(), 'ether');
+                
+                // Convert ETH to INR for display purposes
                 const priceInINR = (priceInEth * ETH_TO_INR_CONVERSION_RATE).toFixed(2);
-
+    
                 loadedCrops.push({
                     ...crop,
-                    price: priceInINR, // Store the price in ETH
+                    price: priceInINR, // Store the price in INR for display
                 });
             }
     
             setCrops(loadedCrops);
         } catch (error) {
             console.error(error);
-            
+            alert("Failed to load crops. Please try again later.");
         }
     };
     
-    
-
     useEffect(() => {
         loadCrops();
     }, []);
