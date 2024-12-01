@@ -1,6 +1,7 @@
 /* Updated HomePage Styles with Custom Color Palette */
 
 .home-page-container {
+    margin-top: 60px;
     padding: 20px;
     text-align: center;
     background-color: #E0FBE2; /* Light greenish background */
@@ -9,6 +10,7 @@
 }
 
 .hero-title {
+    
     color: #2c6e49; /* Deep green */
     margin-bottom: 10px;
     font-family: 'Roboto', sans-serif;
