@@ -67,22 +67,23 @@ const CropRegistration = () => {
     return (
         <Layout>
             <div className="dashboard-page">
+                
                 <h1>Register Your Harvest🌶️</h1>
-                <form>
-                    <label>Name:</label>
-                    <input type="text" value={cropDetails.name} onChange={(e) => setCropDetails({ ...cropDetails, name: e.target.value })} />
+                <form className="cropregister-form">
+                    
+                    <input type="text" placeholder="Name" value={cropDetails.name} onChange={(e) => setCropDetails({ ...cropDetails, name: e.target.value })} />
 
-                    <label>Location:</label>
-                    <input type="text" value={cropDetails.location} onChange={(e) => setCropDetails({ ...cropDetails, location: e.target.value })} />
+                   
+                    <input type="text" placeholder="Location" value={cropDetails.location} onChange={(e) => setCropDetails({ ...cropDetails, location: e.target.value })} />
 
-                    <label>Harvest Time (in days):</label>
-                    <input type="number" value={cropDetails.harvestTime} onChange={(e) => setCropDetails({ ...cropDetails, harvestTime: e.target.value })} />
+                  
+                    <input type="number" placeholder="Harvest Time (Months)" value={cropDetails.harvestTime} onChange={(e) => setCropDetails({ ...cropDetails, harvestTime: e.target.value })} />
 
-                    <label>Price (in INR):</label>
-                    <input type="number" value={cropDetails.price} onChange={(e) => setCropDetails({ ...cropDetails, price: e.target.value })} />
+                    
+                    <input type="number" placeholder="Price (Rs)" value={cropDetails.price} onChange={(e) => setCropDetails({ ...cropDetails, price: e.target.value })} />
 
-                    <label>Additional Info:</label>
-                    <input type="text" value={cropDetails.additionalInfo} onChange={(e) => setCropDetails({ ...cropDetails, additionalInfo: e.target.value })} />
+                   
+                    <input type="text" placeholder="Additional Information" value={cropDetails.additionalInfo} onChange={(e) => setCropDetails({ ...cropDetails, additionalInfo: e.target.value })} />
 
                     <button type="button" onClick={handleSubmit} disabled={loading}>
                         {loading ? "Registering..." : "Register Crop"}
