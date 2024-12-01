@@ -2,330 +2,6 @@
     text-align: center;
     margin: 20px auto;
     font-family: 'Arial', sans-serif;
-    background-color: #e8f5e9; /* Light green background */
-    padding: 20px;
-    border-radius: 10px;
-}
-
-.dashboard-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: #ffffff; /* Soft green background */
-    padding: 20px;
-    border-radius: 10px;
-    border-style: solid;
-    border-color: #4caf50;
-    border-width: 5px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-form input,
-.dashboard-form textarea {
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    border-color: #4caf50;
-    border-width: 3px;
-    font-size: 1rem;
-    width: 92%;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.dashboard-form input:focus,
-.dashboard-form textarea:focus {
-    border-color: #4caf50; /* Vibrant green */
-    outline: none;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-}
-
-.dashboard-form button {
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: none;
-    background-color: #4caf50; /* Vibrant green */
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
-    margin-top: 10px;
-}
-
-.dashboard-form button:hover {
-    background-color: #45a049; /* Slightly darker green */
-    transform: scale(1.05);
-}
-
-.dashboard-form button:disabled {
-    background-color: #a5d6a7; /* Light green for disabled */
-    cursor: not-allowed;
-}
-
-.dashboard-form textarea {
-    resize: vertical;
-    min-height: 100px;
-    font-family: 'Arial', sans-serif;
-}
-
-.dashboard-info {
-    margin: 20px auto;
-    max-width: 600px;
-    text-align: left;
-    font-size: 1.1rem;
-    line-height: 1.7;
-    background-color: #e8f5e9; /* Soft green background */
-    padding: 20px;
- }
-
-.dashboard-info p {
-    margin-bottom: 10px;
-    color: #2e7d32; /* Darker green for text */
-}
-
-.dashboard-button, .dashboard-logout {
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    margin: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-.dashboard-button {
-    background-color: #4caf50; /* Vibrant green */
-    color: white;
-}
-
-.dashboard-logout {
-    background-color: #d32f2f; /* Red for logout */
-    color: white;
-}
-
-.dashboard-button:hover {
-    background-color: #45a049; /* Slightly darker green */
-    transform: scale(1.05);
-}
-
-.dashboard-logout:hover {
-    background-color: #c2185b; /* Darker red */
-    transform: scale(1.05);
-}
-
-/* Styling for crop cards */
-.crops-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-    margin: 0 auto;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #45a049;
-}
-
-.crop-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 15px;
-    background-color: #ffffff; /* White background for crops */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-    text-align: center;
-   
-}
-
-.crop-card:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
-}
-
-.crop-card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #2e7d32; /* Dark green for titles */
-}
-
-.crop-card p {
-    font-size: 0.9rem;
-    color: #2e7d32; /* Gray text for details */
-    margin: 5px 0;
-}
-
-.crop-card .crop-info {
-    padding: 10px 0;
-    background-color: #e8f5e9; /* Soft green background */
-    border-radius: 8px;
-    margin: 10px 0;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #45a049;
-}
-
-
-.dashboard-page h1 {
-    color: #2e7d32; /* Dark green for headings */
-    margin-bottom: 20px;
-}
-
-.crops-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Set to 3 columns */
-    gap: 20px;
-    padding: 20px;
-    margin: 0 auto;
-}
-
-.crop-card {
-    border: 5px solid #388e3c;
-    border-radius: 20px;
-    padding: 20px;
-    background-color: #ffffff; /* White background for crops */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-    text-align: center;
-    margin: 50px ;
-    color: #2e7d32; /* Dark green for text */
-}
-
-.crop-card:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
-}
-
-.crop-card h2 {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-}
-
-.crop-card p {
-    font-size: 1rem;
-    color: #555; /* Gray text for details */
-    margin: 5px 0;
-}
-
-.crop-card p:first-child {
-    color: #4caf50; /* Green for price */
-    font-weight: bold;
-}
-
-.crop-card p:last-child {
-    color: #388e3c; /* Subtle green for location */
-}
-.dashboard-page {
-    text-align: center;
-    margin: 20px auto;
-    font-family: 'Arial', sans-serif;
-    background-color: #f4fef2; /* Light green background */
-    padding: 20px;
-    border-radius: 10px;
-}
-
-.dashboard-info {
-    margin: 20px auto;
-    max-width: 600px;
-    text-align: left;
-    font-size: 1.1rem;
-    line-height: 1.7;
-    background-color: #e8f5e9; /* Soft green background */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-info p {
-    margin-bottom: 10px;
-    color: #2e7d32; /* Darker green for text */
-}
-
-.dashboard-button, .dashboard-logout {
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    margin: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-.dashboard-button {
-    background-color: #4caf50; /* Vibrant green */
-    color: white;
-}
-
-.dashboard-logout {
-    background-color: #d32f2f; /* Red for logout */
-    color: white;
-}
-
-.dashboard-button:hover {
-    background-color: #45a049; /* Slightly darker green */
-    transform: scale(1.05);
-}
-
-.dashboard-logout:hover {
-    background-color: #c2185b; /* Darker red */
-    transform: scale(1.05);
-}
-
-/* Styling for crop cards */
-.crops-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-    margin: 0 auto;
-}
-
-.crop-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 15px;
-    background-color: #ffffff; /* White background for crops */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-    text-align: center;
-}
-
-.crop-card:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
-}
-
-.crop-card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #2e7d32; /* Dark green for titles */
-}
-
-.crop-card p {
-    font-size: 0.9rem;
-    color: #555; /* Gray text for details */
-    margin: 5px 0;
-}
-
-.crop-card .crop-info {
-    padding: 10px 0;
-    background-color: #e8f5e9; /* Soft green background */
-    border-radius: 8px;
-    margin: 10px 0;
-}
-
-.crop-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-.dashboard-page {
-    text-align: center;
-    margin: 20px auto;
-    font-family: 'Arial', sans-serif;
-    background-color: #f4fef2; /* Light green background */
     padding: 20px;
     border-radius: 10px;
 }
@@ -381,12 +57,6 @@
     cursor: not-allowed;
 }
 
-.dashboard-form textarea {
-    resize: vertical;
-    min-height: 100px;
-    font-family: 'Arial', sans-serif;
-}
-
 .dashboard-info {
     margin: 20px auto;
     max-width: 600px;
@@ -434,19 +104,26 @@
     transform: scale(1.05);
 }
 
-/* Styling for crop cards */
 .crops-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     padding: 20px;
     margin: 0 auto;
 }
 
+.crops-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+    gap: 20px; /* Spacing between the cards */
+    padding: 20px;
+  }
+  
 .crop-card {
-    border: 1px solid #ddd;
+    border: 5px solid #45a049;
     border-radius: 10px;
-    padding: 15px;
+    width: 300px;
+    margin: 50px;
+    padding: 20px;
     background-color: #ffffff; /* White background for crops */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease-in-out;
@@ -456,7 +133,7 @@
 
 .crop-card:hover {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
+    transform: translateY(-7px);
 }
 
 .crop-card h3 {
@@ -478,108 +155,37 @@
     margin: 10px 0;
 }
 
-.crop-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-.dashboard-page {
-    text-align: center;
-    margin: 20px auto;
-    font-family: 'Arial', sans-serif;
-    background-color: #f4fef2; /* Light green background */
+.crop-details-page {
+    max-width: 800px;
+    margin: 40px auto;
     padding: 20px;
-    border-radius: 10px;
-}
-
-.dashboard-page h1 {
-    color: #2e7d32; /* Dark green for headings */
-    margin-bottom: 20px;
-}
-
-.crops-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-    margin: 0 auto;
-}
-
-.crop-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 15px;
-    background-color: #ffffff; /* White background for crops */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-    text-align: center;
-    color: #2e7d32; /* Dark green for text */
-}
-
-.crop-card:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
-}
-
-.crop-card h2 {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-}
-
-.crop-card p {
-    font-size: 1rem;
-    color: #555; /* Gray text for details */
-    margin: 5px 0;
-}
-
-.crop-card p:first-child {
-    color: #4caf50; /* Green for price */
-    font-weight: bold;
-}
-
-.crop-card p:last-child {
-    color: #388e3c; /* Subtle green for location */
-}
-.dashboard-page {
-    text-align: center;
-    margin: 20px auto;
-    font-family: 'Arial', sans-serif;
-    background-color: #f4fef2; /* Light green background */
-    padding: 20px;
-    border-radius: 10px;
-}
-
-.dashboard-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: #e8f5e9; /* Soft green background */
-    padding: 20px;
-    border-radius: 10px;
+    background-color: #ffffff; /* Light yellow-green */
+    border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    text-align: left;
 }
 
-.dashboard-form input,
-.dashboard-form textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+.crop-details-page h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #2e7d32; /* Dark green */
+    text-align: center;
+}
+
+.crop-details-page p {
     font-size: 1rem;
-    width: 100%;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    margin: 10px 0;
+    color: #333; /* Dark gray */
 }
 
-.dashboard-form input:focus,
-.dashboard-form textarea:focus {
-    border-color: #4caf50; /* Vibrant green */
-    outline: none;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+.crop-details-page p strong {
+    color: #4caf50; /* Vibrant green for labels */
 }
 
-.dashboard-form button {
+.crop-details-page button {
+    display: block;
+    margin: 20px auto 0;
     padding: 12px 24px;
     border-radius: 8px;
     border: none;
@@ -588,118 +194,14 @@
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
-    margin-top: 10px;
 }
 
-.dashboard-form button:hover {
+.crop-details-page button:hover {
     background-color: #45a049; /* Slightly darker green */
     transform: scale(1.05);
 }
 
-.dashboard-form button:disabled {
-    background-color: #a5d6a7; /* Light green for disabled */
-    cursor: not-allowed;
-}
-
-.dashboard-form textarea {
-    resize: vertical;
-    min-height: 100px;
-    font-family: 'Arial', sans-serif;
-}
-
-.dashboard-info {
-    margin: 20px auto;
-    max-width: 600px;
-    text-align: left;
-    font-size: 1.1rem;
-    line-height: 1.7;
-    background-color: #e8f5e9; /* Soft green background */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-info p {
-    margin-bottom: 10px;
-    color: #2e7d32; /* Darker green for text */
-}
-
-.dashboard-button, .dashboard-logout {
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    margin: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-.dashboard-button {
-    background-color: #4caf50; /* Vibrant green */
-    color: white;
-}
-
-.dashboard-logout {
-    background-color: #d32f2f; /* Red for logout */
-    color: white;
-}
-
-.dashboard-button:hover {
-    background-color: #45a049; /* Slightly darker green */
-    transform: scale(1.05);
-}
-
-.dashboard-logout:hover {
-    background-color: #c2185b; /* Darker red */
-    transform: scale(1.05);
-}
-
-/* Styling for crop cards */
-.crops-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-    margin: 0 auto;
-}
-
-.crop-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 15px;
-    background-color: #ffffff; /* White background for crops */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-    text-align: center;
-}
-
-.crop-card:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
-}
-
-.crop-card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #2e7d32; /* Dark green for titles */
-}
-
-.crop-card p {
-    font-size: 0.9rem;
-    color: #555; /* Gray text for details */
-    margin: 5px 0;
-}
-
-.crop-card .crop-info {
-    padding: 10px 0;
-    background-color: #e8f5e9; /* Soft green background */
-    border-radius: 8px;
-    margin: 10px 0;
-}
-
-.crop-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
+.crop-details-page button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }

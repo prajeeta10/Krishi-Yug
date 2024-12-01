@@ -7,7 +7,6 @@ import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
 import "../styles/Dashboard.css";
 import Layout from './Layout';
 
-const ETH_TO_INR_CONVERSION_RATE = 800000; // Sample conversion rate; adjust as needed
 
 const CustomerDashboard = () => {
     const [crops, setCrops] = useState([]);
