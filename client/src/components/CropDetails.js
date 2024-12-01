@@ -1,3 +1,4 @@
+// CropDetails.js
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Web3 from "web3";
@@ -7,8 +8,22 @@ import Layout from './Layout';
 
 const CropDetails = () => {
     const [crop, setCrop] = useState({});
+    const [formVisible, setFormVisible] = useState(false);
+    const [purchaseStatus, setPurchaseStatus] = useState(null);
+    const [formData, setFormData] = useState({
+        customerName: '',
+        contactInfo: '',
+        deliveryAddress: '',
+        cropName: '',
+        quantity: 0,
+        pricePerUnit: 0,
+        totalPrice: 0,
+        termsAccepted: false,
+    });
+
     const navigate = useNavigate();
     const { id } = useParams();
+    const pricePerUnit = typeof formData.pricePerUnit === 'number' ? formData.pricePerUnit : 0;
 
     const loadCropDetails = async () => {
         try {
@@ -31,11 +46,106 @@ const CropDetails = () => {
             setCrop({
                 ...fetchedCrop,
                 price: fetchedCrop.price.toString(), // Assuming price is stored in INR
-                harvestTime: fetchedCrop.harvestTime.toString() || "N/A", // Ensure harvestTime is handled as a string
+                harvestTime: fetchedCrop.harvestTime.toString() || "N/A",
+            });
+
+            setFormData({
+                ...formData,
+                cropName: fetchedCrop.name,
+                pricePerUnit: fetchedCrop.price,
             });
         } catch (error) {
             console.error(error);
             alert(error.message || "Error loading crop details.");
+        }
+    };
+
+    const handleBuyNow = () => {
+        if (window.ethereum) {
+            setFormVisible(true);
+        } else {
+            alert("Please connect your wallet to proceed.");
+        }
+    };
+
+    const handleCancelPurchase = () => {
+        setFormVisible(false);
+        setFormData({
+            customerName: '',
+            contactInfo: '',
+            deliveryAddress: '',
+            cropName: '',
+            quantity: 0,
+            pricePerUnit: 0,
+            totalPrice: 0,
+            termsAccepted: false,
+        });
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
+        // Handle checkbox separately
+        if (name === 'termsAccepted') {
+            setFormData({
+                ...formData,
+                [name]: !formData.termsAccepted,
+            });
+        } else {
+            // Handle numeric fields and auto-calculate total price
+            const updatedFormData = {
+                ...formData,
+                [name]: value,
+            };
+
+            if (name === 'quantity') {
+                const totalPrice = value * parseFloat(crop.price);
+                updatedFormData.totalPrice = totalPrice;
+            }
+
+            setFormData(updatedFormData);
+        }
+    };
+
+    const handleSubmit = async () => {
+        try {
+            if (!formData.termsAccepted) {
+                alert("You must agree to the terms and conditions to proceed.");
+                return;
+            }
+
+            // Validate price
+            if (isNaN(formData.totalPrice) || formData.totalPrice <= 0) {
+                alert("Invalid total price. Please check your input.");
+                return;
+            }
+
+            // Payment logic to be implemented here (e.g., interacting with smart contract)
+            const web3 = new Web3(window.ethereum);
+            const accounts = await web3.eth.requestAccounts();
+            const userAccount = accounts[0];
+
+            const networkId = await web3.eth.net.getId();
+            const deployedNetwork = AgriSupplyChain.networks[networkId];
+            const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
+
+            // Convert total price from INR to Ether
+            const priceInEther = web3.utils.toWei(formData.totalPrice.toString(), 'ether');
+
+            // Call smart contract method to confirm purchase (replace with actual function)
+            await contract.methods.confirmPurchase(
+                crop.id,
+                formData.customerName,
+                formData.contactInfo,
+                formData.deliveryAddress,
+                formData.quantity
+            ).send({ from: userAccount, value: priceInEther });
+
+            setPurchaseStatus('Success');
+            setFormVisible(false);
+        } catch (error) {
+            console.error("Error during purchase:", error);
+            setPurchaseStatus('Failed');
         }
     };
 
@@ -54,6 +164,107 @@ const CropDetails = () => {
                     <strong>Harvest Time:</strong> {crop.harvestTime} Month(s)
                 </p>
                 <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
+                {!formVisible && (
+                    <button onClick={handleBuyNow} className="buy-now-btn">
+                        Buy Now
+                    </button>
+                )}
+                {formVisible && (
+                    <div className="purchase-form">
+                        <h2>Purchase Form</h2>
+                        <div className="form-group">
+                            <label>Customer Name:</label>
+                            <input
+                                type="text"
+                                name="customerName"
+                                value={formData.customerName}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Contact Information:</label>
+                            <input
+                                type="text"
+                                name="contactInfo"
+                                value={formData.contactInfo}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Delivery Address:</label>
+                            <input
+                                type="text"
+                                name="deliveryAddress"
+                                value={formData.deliveryAddress}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Crop Name:</label>
+                            <input
+                                type="text"
+                                name="cropName"
+                                value={formData.cropName}
+                                onChange={handleInputChange}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Quantity (kg):</label>
+                            <input
+                                type="number"
+                                name="quantity"
+                                value={formData.quantity}
+                                onChange={handleInputChange}
+                                min="1"
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Price per unit (₹/kg):</label>
+                            <input
+                                type="text"
+                                value={formData.pricePerUnit.toFixed(2)}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Total Price (₹):</label>
+                            <input
+                                type="text"
+                                value={formData.totalPrice.toFixed(2)}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    name="termsAccepted"
+                                    checked={formData.termsAccepted}
+                                    onChange={handleInputChange}
+                                />
+                                I agree to the terms and conditions.
+                            </label>
+                        </div>
+                        <div className="form-buttons">
+                            <button onClick={handleCancelPurchase} className="cancel-btn">
+                                Cancel Purchase
+                            </button>
+                            <button onClick={handleSubmit} className="confirm-btn">
+                                Confirm Purchase
+                            </button>
+                        </div>
+                    </div>
+                )}
+                {purchaseStatus && (
+                    <p className="status-message">
+                        {purchaseStatus === 'Success' ? 'Purchase Successful!' : 'Purchase Failed. Please try again.'}
+                    </p>
+                )}
                 <button onClick={() => navigate("/customer-dashboard")}>
                     Back to Dashboard
                 </button>

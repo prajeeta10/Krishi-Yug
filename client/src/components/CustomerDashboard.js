@@ -1,14 +1,37 @@
 // CustomerDashboard.js
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
+import { useNavigate } from "react-router-dom"; // Add this import
 import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
 import "../styles/Dashboard.css";
 import Layout from './Layout';
 
 const CustomerDashboard = () => {
+    const [walletAddress, setWalletAddress] = useState("");
     const [crops, setCrops] = useState([]);
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Initialize navigate
+
+    const connectWallet = async () => {
+        try {
+            if (!window.ethereum) {
+                alert("MetaMask not detected. Please install it.");
+                return;
+            }
+            const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+            setWalletAddress(accounts[0]);
+
+            // Event listener for account change
+            window.ethereum.on("accountsChanged", (accounts) => {
+                if (accounts.length > 0) {
+                    setWalletAddress(accounts[0]);
+                } else {
+                    setWalletAddress(""); // User disconnected wallet
+                }
+            });
+        } catch (error) {
+            console.error("Error connecting wallet:", error);
+        }
+    };
 
     const loadCrops = async () => {
         try {
@@ -48,7 +71,15 @@ const CustomerDashboard = () => {
     };
 
     useEffect(() => {
+        connectWallet();
         loadCrops();
+
+        return () => {
+            // Clean up the accountsChanged listener
+            if (window.ethereum?.removeListener) {
+                window.ethereum.removeListener("accountsChanged", connectWallet);
+            }
+        };
     }, []);
 
     return (
@@ -56,6 +87,10 @@ const CustomerDashboard = () => {
             <div className="dashboard-page">
                 <h1>Welcome Dear Customer!🤵🏻‍♂️</h1>
                 <h2>What would you like to buy today?</h2>
+                <br></br>
+                <button className="wallet-btn" onClick={connectWallet}>
+                    {walletAddress ? `Connected: ${walletAddress}` : "Connect Wallet"}
+                </button>
                 <div className="crops-list">
                     {crops.length > 0 ? (
                         crops.map((crop, index) => (

@@ -116,7 +116,7 @@ const Layout = ({ children }) => {
                         rel="noreferrer"
                         style={{
                             color: "#2C6E49",
-                            fontSize: "1.5rem",
+                            fontSize: "1rem",
                             textDecoration: "none",
                             transition: "color 0.3s ease, transform 0.3s ease",
                         }}
@@ -131,7 +131,7 @@ const Layout = ({ children }) => {
                         rel="noreferrer"
                         style={{
                             color: "#2C6E49",
-                            fontSize: "1.5rem",
+                            fontSize: "1rem",
                             textDecoration: "none",
                             transition: "color 0.3s ease, transform 0.3s ease",
                         }}
@@ -146,7 +146,7 @@ const Layout = ({ children }) => {
                         rel="noreferrer"
                         style={{
                             color: "#2C6E49",
-                            fontSize: "1.5rem",
+                            fontSize: "1rem",
                             textDecoration: "none",
                             transition: "color 0.3s ease, transform 0.3s ease",
                         }}
