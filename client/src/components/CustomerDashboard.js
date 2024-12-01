@@ -1,4 +1,5 @@
 //CustomerDashboard
+//CustomerDashboard
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
@@ -17,39 +18,44 @@ const CustomerDashboard = () => {
             if (!window.ethereum) {
                 throw new Error("MetaMask not detected. Please install it.");
             }
-
+    
             const web3 = new Web3(window.ethereum);
+    
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = AgriSupplyChain.networks[networkId];
-
+    
             if (!deployedNetwork) {
                 throw new Error("Smart contract not deployed on this network.");
             }
-
-            const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
-
+    
+            const contract = new web3.eth.Contract(
+                AgriSupplyChain.abi,
+                deployedNetwork.address
+            );
+    
             const cropCount = await contract.methods.cropCount().call();
             const loadedCrops = [];
-
+    
             for (let i = 1; i <= cropCount; i++) {
                 const crop = await contract.methods.getCrop(i).call();
-
-                // Convert price from ETH to INR
+    
+                // Convert price from Wei to ETH if necessary
                 const priceInEth = web3.utils.fromWei(crop.price.toString(), 'ether');
-                const priceInINR = (priceInEth * ETH_TO_INR_CONVERSION_RATE).toFixed(2);
-
+    
                 loadedCrops.push({
                     ...crop,
-                    price: priceInINR, // Store the price in INR
+                    price: priceInEth, // Store the price in ETH
                 });
             }
-
+    
             setCrops(loadedCrops);
         } catch (error) {
             console.error(error);
-            alert(error.message || "Error loading crops.");
+            
         }
     };
+    
+    
 
     useEffect(() => {
         loadCrops();
