@@ -85,8 +85,8 @@ const FarmerDashboard = () => {
                                 <li key={crop.id}>
                                     <p><strong>Name:</strong> {crop.name}</p>
                                     <p><strong>Location:</strong> {crop.location}</p>
-                                    <p><strong>Harvest Time:</strong> {crop.harvestTime} days</p>
-                                    <p><strong>Price:</strong> {crop.price} ETH</p>
+                                    <p><strong>Harvest Time:</strong> {crop.harvestTime} Month(s)</p>
+                                    <p><strong>Price: ₹</strong>{crop.price} </p>
                                     <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
                                 </li>
                             ))

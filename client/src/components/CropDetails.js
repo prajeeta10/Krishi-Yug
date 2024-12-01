@@ -1,4 +1,3 @@
-// CropDetails.js
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Web3 from "web3";
@@ -6,16 +5,8 @@ import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
 import "../styles/Dashboard.css";
 import Layout from './Layout';
 
-const ETH_TO_INR_CONVERSION_RATE = 312721; // Sample conversion rate; adjust as needed
-
 const CropDetails = () => {
-    const [crop, setCrop] = useState({
-        name: "",
-        location: "",
-        price: "Loading...",
-        harvestTime: "",
-        additionalInfo: "",
-    });
+    const [crop, setCrop] = useState({});
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -37,20 +28,14 @@ const CropDetails = () => {
 
             const fetchedCrop = await contract.methods.getCrop(id).call();
 
-            // Convert price from ETH to INR
-            const priceInEth = web3.utils.fromWei(fetchedCrop.price.toString(), 'ether');
-            const priceInINR = (priceInEth * ETH_TO_INR_CONVERSION_RATE).toFixed(2);
-
             setCrop({
-                name: fetchedCrop.name,
-                location: fetchedCrop.location,
-                price: priceInINR, // Display price in INR
-                harvestTime: fetchedCrop.harvestTime,
-                additionalInfo: fetchedCrop.additionalInfo,
+                ...fetchedCrop,
+                price: fetchedCrop.price.toString(), // Assuming price is stored in INR
+                harvestTime: fetchedCrop.harvestTime.toString() || "N/A", // Ensure harvestTime is handled as a string
             });
         } catch (error) {
             console.error(error);
-            alert("Error loading crop details. Please check your connection or try again later.");
+            alert(error.message || "Error loading crop details.");
         }
     };
 
@@ -65,7 +50,9 @@ const CropDetails = () => {
                 <p><strong>Name:</strong> {crop.name}</p>
                 <p><strong>Location:</strong> {crop.location}</p>
                 <p><strong>Price:</strong> ₹{crop.price}</p>
-                <p><strong>Harvest Time:</strong> {crop.harvestTime} days</p>
+                <p>
+                    <strong>Harvest Time:</strong> {crop.harvestTime} Month(s)
+                </p>
                 <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
                 <button onClick={() => navigate("/customer-dashboard")}>
                     Back to Dashboard
