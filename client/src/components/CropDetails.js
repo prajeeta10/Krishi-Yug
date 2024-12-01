@@ -1,4 +1,3 @@
-// CropDetails.js
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Web3 from "web3";
@@ -23,7 +22,6 @@ const CropDetails = () => {
 
     const navigate = useNavigate();
     const { id } = useParams();
-    const pricePerUnit = typeof formData.pricePerUnit === 'number' ? formData.pricePerUnit : 0;
 
     const loadCropDetails = async () => {
         try {
@@ -45,14 +43,14 @@ const CropDetails = () => {
 
             setCrop({
                 ...fetchedCrop,
-                price: fetchedCrop.price.toString(), // Assuming price is stored in INR
+                price: parseFloat(fetchedCrop.price).toFixed(2), // Ensure price is a valid number and formatted correctly
                 harvestTime: fetchedCrop.harvestTime.toString() || "N/A",
             });
 
             setFormData({
                 ...formData,
                 cropName: fetchedCrop.name,
-                pricePerUnit: fetchedCrop.price,
+                pricePerUnit: parseFloat(fetchedCrop.price).toFixed(2), // Ensure price per unit is correctly set
             });
         } catch (error) {
             console.error(error);
@@ -93,17 +91,21 @@ const CropDetails = () => {
             });
         } else {
             // Handle numeric fields and auto-calculate total price
-            const updatedFormData = {
-                ...formData,
-                [name]: value,
-            };
-
+            let updatedValue = value;
             if (name === 'quantity') {
-                const totalPrice = value * parseFloat(crop.price);
-                updatedFormData.totalPrice = totalPrice;
+                updatedValue = parseInt(value, 10) || 0;
+                const totalPrice = updatedValue * parseFloat(crop.price);
+                setFormData({
+                    ...formData,
+                    [name]: updatedValue,
+                    totalPrice: totalPrice.toFixed(2), // Ensure totalPrice is formatted as a string with 2 decimal places
+                });
+            } else {
+                setFormData({
+                    ...formData,
+                    [name]: updatedValue,
+                });
             }
-
-            setFormData(updatedFormData);
         }
     };
 
@@ -115,7 +117,7 @@ const CropDetails = () => {
             }
 
             // Validate price
-            if (isNaN(formData.totalPrice) || formData.totalPrice <= 0) {
+            if (isNaN(formData.totalPrice) || parseFloat(formData.totalPrice) <= 0) {
                 alert("Invalid total price. Please check your input.");
                 return;
             }
@@ -160,9 +162,7 @@ const CropDetails = () => {
                 <p><strong>Name:</strong> {crop.name}</p>
                 <p><strong>Location:</strong> {crop.location}</p>
                 <p><strong>Price:</strong> ₹{crop.price}</p>
-                <p>
-                    <strong>Harvest Time:</strong> {crop.harvestTime} Month(s)
-                </p>
+                <p><strong>Harvest Time:</strong> {crop.harvestTime} Month(s)</p>
                 <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
                 {!formVisible && (
                     <button onClick={handleBuyNow} className="buy-now-btn">
@@ -227,7 +227,7 @@ const CropDetails = () => {
                             <label>Price per unit (₹/kg):</label>
                             <input
                                 type="text"
-                                value={formData.pricePerUnit.toFixed(2)}
+                                value={formData.pricePerUnit}
                                 readOnly
                             />
                         </div>
@@ -235,7 +235,7 @@ const CropDetails = () => {
                             <label>Total Price (₹):</label>
                             <input
                                 type="text"
-                                value={formData.totalPrice.toFixed(2)}
+                                value={formData.totalPrice}
                                 readOnly
                             />
                         </div>
