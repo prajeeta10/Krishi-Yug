@@ -7,6 +7,7 @@ import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
 import "../styles/Dashboard.css";
 import Layout from './Layout';
 
+const ETH_TO_INR_CONVERSION_RATE = 312721; // Sample conversion rate; adjust as needed
 
 const CustomerDashboard = () => {
     const [crops, setCrops] = useState([]);
@@ -40,10 +41,11 @@ const CustomerDashboard = () => {
     
                 // Convert price from Wei to ETH if necessary
                 const priceInEth = web3.utils.fromWei(crop.price.toString(), 'ether');
-    
+                const priceInINR = (priceInEth * ETH_TO_INR_CONVERSION_RATE).toFixed(2);
+
                 loadedCrops.push({
                     ...crop,
-                    price: priceInEth, // Store the price in ETH
+                    price: priceInINR, // Store the price in ETH
                 });
             }
     
