@@ -1,3 +1,4 @@
+//AgriSupplyChain.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
@@ -28,21 +29,33 @@ contract AgriSupplyChain {
         string name;
         string location;
         uint256 harvestTime; // Days required for harvest
-        uint256 price;
+        uint256 price; // Price in rupees
         string additionalInfo;
         address farmer; // Owner of the crop
     }
 
-    // State variables
+    // Transaction Structure
+    struct Transaction {
+        uint256 cropId;
+        address farmer;
+        address customer;
+        uint256 amount; // Paid in ether
+        uint256 timestamp;
+    }
+
+    // State Variables
     mapping(address => Farmer) public farmers;
     mapping(address => Customer) public customers;
     mapping(uint256 => Crop) public crops;
+    mapping(address => Transaction[]) public farmerTransactions;
+    mapping(address => Transaction[]) public customerTransactions;
     uint256 public cropCount;
 
     // Events
     event FarmerRegistered(address indexed farmer, string name);
     event CustomerRegistered(address indexed customer, string name);
     event CropRegistered(uint256 indexed id, string name, address indexed farmer);
+    event CropPurchased(uint256 indexed id, address indexed customer, address indexed farmer, uint256 amount);
 
     // Register Farmer
     function registerFarmer(
@@ -62,17 +75,6 @@ contract AgriSupplyChain {
         emit FarmerRegistered(msg.sender, _name);
     }
 
-     function loginFarmer(string memory _username, string memory _password) public view returns (bool) {
-        Farmer memory farmer = farmers[msg.sender];
-        require(farmer.isRegistered, "Farmer not registered.");
-        require(
-            keccak256(abi.encodePacked(farmer.username)) == keccak256(abi.encodePacked(_username)) &&
-            keccak256(abi.encodePacked(farmer.password)) == keccak256(abi.encodePacked(_password)),
-            "Invalid username or password."
-        );
-        return true;
-    }
-
     // Register Customer
     function registerCustomer(
         string memory _username,
@@ -89,18 +91,6 @@ contract AgriSupplyChain {
             lastLogin: 0
         });
         emit CustomerRegistered(msg.sender, _name);
-    }
-
-    // Customer Login
-    function loginCustomer(string memory _username, string memory _password) public view returns (bool) {
-        Customer memory customer = customers[msg.sender];
-        require(customer.isRegistered, "Customer not registered.");
-        require(
-            keccak256(abi.encodePacked(customer.username)) == keccak256(abi.encodePacked(_username)) &&
-            keccak256(abi.encodePacked(customer.password)) == keccak256(abi.encodePacked(_password)),
-            "Invalid username or password."
-        );
-        return true;
     }
 
     // Register Crop
@@ -125,21 +115,48 @@ contract AgriSupplyChain {
         emit CropRegistered(cropCount, _name, msg.sender);
     }
 
-    // Get Crop Details
-    function getCrop(uint256 _id)
-        public
-        view
-        returns (
-            uint256 id,
-            string memory name,
-            string memory location,
-            uint256 harvestTime,
-            uint256 price,
-            string memory additionalInfo,
-            address farmer
-        )
-    {
+    // Purchase Crop
+    function buyCrop(uint256 _id, uint256 _quantity) public payable {
+        require(customers[msg.sender].isRegistered, "Only registered customers can buy crops.");
         Crop memory crop = crops[_id];
-        return (crop.id, crop.name, crop.location, crop.harvestTime, crop.price, crop.additionalInfo, crop.farmer);
+        require(crop.id != 0, "Crop does not exist.");
+        require(_quantity > 0, "Quantity must be greater than zero.");
+
+        uint256 totalPriceInRupees = crop.price * _quantity;
+        uint256 totalPriceInEther = convertRupeesToEther(totalPriceInRupees);
+
+        require(msg.value >= totalPriceInEther, "Insufficient ETH sent.");
+
+        // Transfer payment to farmer
+        payable(crop.farmer).transfer(msg.value);
+
+        // Record transaction
+        Transaction memory txn = Transaction({
+            cropId: _id,
+            farmer: crop.farmer,
+            customer: msg.sender,
+            amount: msg.value,
+            timestamp: block.timestamp
+        });
+        farmerTransactions[crop.farmer].push(txn);
+        customerTransactions[msg.sender].push(txn);
+
+        emit CropPurchased(_id, msg.sender, crop.farmer, msg.value);
+    }
+
+    // Utility: Convert Rupees to Ether
+    function convertRupeesToEther(uint256 rupees) public pure returns (uint256) {
+        uint256 etherRate = 80000; // Example conversion rate: 1 ETH = 80,000 INR
+        return rupees * 1 ether / etherRate;
+    }
+
+    // View Farmer Transactions
+    function getFarmerTransactions() public view returns (Transaction[] memory) {
+        return farmerTransactions[msg.sender];
+    }
+
+    // View Customer Transactions
+    function getCustomerTransactions() public view returns (Transaction[] memory) {
+        return customerTransactions[msg.sender];
     }
 }

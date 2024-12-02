@@ -5,6 +5,8 @@ import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
 import "../styles/Dashboard.css";
 import Layout from './Layout';
 
+const INR_TO_ETHER_RATE = 315726; // Example conversion rate: 1 Ether = 1,50,000 INR
+
 const CropDetails = () => {
     const [crop, setCrop] = useState({});
     const [formVisible, setFormVisible] = useState(false);
@@ -95,10 +97,12 @@ const CropDetails = () => {
             if (name === 'quantity') {
                 updatedValue = parseInt(value, 10) || 0;
                 const totalPrice = updatedValue * parseFloat(crop.price);
+                const totalPriceInEther = (totalPrice / INR_TO_ETHER_RATE).toFixed(6); // Calculate Ether price
                 setFormData({
                     ...formData,
                     [name]: updatedValue,
                     totalPrice: totalPrice.toFixed(2), // Ensure totalPrice is formatted as a string with 2 decimal places
+                    totalPriceInEther, // Update Ether equivalent
                 });
             } else {
                 setFormData({
@@ -162,7 +166,7 @@ const CropDetails = () => {
                 <p><strong>Name:</strong> {crop.name}</p>
                 <p><strong>Location:</strong> {crop.location}</p>
                 <p><strong>Price:</strong> ₹{crop.price}</p>
-                <p><strong>Harvest Time:</strong> {crop.harvestTime} Month(s)</p>
+                <p><strong>Quantity Produced:</strong> {crop.harvestTime} Kg(s)</p>
                 <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
                 {!formVisible && (
                     <button onClick={handleBuyNow} className="buy-now-btn">
@@ -235,7 +239,7 @@ const CropDetails = () => {
                             <label>Total Price (₹):</label>
                             <input
                                 type="text"
-                                value={formData.totalPrice}
+                                value={`₹${formData.totalPrice} (${formData.totalPriceInEther} ETH)`}
                                 readOnly
                             />
                         </div>
