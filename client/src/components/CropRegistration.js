@@ -10,7 +10,7 @@ const CropRegistration = () => {
     const [cropDetails, setCropDetails] = useState({
         name: "",
         location: "",
-        harvestTime: "",
+        quantityProduced: "",
         price: "",
         additionalInfo: "",
     });
@@ -18,9 +18,9 @@ const CropRegistration = () => {
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
-        const { name, location, harvestTime, price, additionalInfo } = cropDetails;
+        const { name, location, quantityProduced, price, additionalInfo } = cropDetails;
 
-        if (!name || !location || !harvestTime || !price) {
+        if (!name || !location || !quantityProduced || !price) {
             alert("Please fill all required fields.");
             return;
         }
@@ -46,7 +46,7 @@ const CropRegistration = () => {
 
             // Register crop with price directly in INR (no conversion to ETH)
             await contract.methods
-                .registerCrop(name, location, parseInt(harvestTime), price, additionalInfo)
+                .registerCrop(name, location, parseInt(quantityProduced), price, additionalInfo)
                 .send({ from: accounts[0] });
 
             alert("Crop registered successfully!");
@@ -66,7 +66,7 @@ const CropRegistration = () => {
                 <form className="cropregister-form">
                     <input type="text" placeholder="Name" value={cropDetails.name} onChange={(e) => setCropDetails({ ...cropDetails, name: e.target.value })} />
                     <input type="text" placeholder="Location" value={cropDetails.location} onChange={(e) => setCropDetails({ ...cropDetails, location: e.target.value })} />
-                    <input type="number" placeholder="Harvest Time (Months)" value={cropDetails.harvestTime} onChange={(e) => setCropDetails({ ...cropDetails, harvestTime: e.target.value })} />
+                    <input type="number" placeholder="Quantity Produced (Kgs)" value={cropDetails.quantityProduced} onChange={(e) => setCropDetails({ ...cropDetails, quantityProduced: e.target.value })} />
                     <input type="number" placeholder="Price (INR)" value={cropDetails.price} onChange={(e) => setCropDetails({ ...cropDetails, price: e.target.value })} />
                     <input type="text" placeholder="Additional Information" value={cropDetails.additionalInfo} onChange={(e) => setCropDetails({ ...cropDetails, additionalInfo: e.target.value })} />
                     <button type="button" onClick={handleSubmit} disabled={loading}>

@@ -28,7 +28,7 @@ contract AgriSupplyChain {
         uint256 id;
         string name;
         string location;
-        uint256 harvestTime; // Days required for harvest
+        uint256 quantityProduced; 
         uint256 price; // Price in rupees
         string additionalInfo;
         address farmer; // Owner of the crop
@@ -57,6 +57,19 @@ contract AgriSupplyChain {
     event CropRegistered(uint256 indexed id, string name, address indexed farmer);
     event CropPurchased(uint256 indexed id, address indexed customer, address indexed farmer, uint256 amount);
 
+
+    // Modifier to check if the sender is a registered farmer
+    modifier onlyFarmer() {
+        require(farmers[msg.sender].isRegistered, "Only registered farmers can execute this.");
+        _;
+    }
+
+    // Modifier to check if the sender is a registered customer
+    modifier onlyCustomer() {
+        require(customers[msg.sender].isRegistered, "Only registered customers can execute this.");
+        _;
+    }
+
     // Register Farmer
     function registerFarmer(
         string memory _username,
@@ -74,6 +87,7 @@ contract AgriSupplyChain {
         });
         emit FarmerRegistered(msg.sender, _name);
     }
+
 
     // Register Customer
     function registerCustomer(
@@ -97,7 +111,7 @@ contract AgriSupplyChain {
     function registerCrop(
         string memory _name,
         string memory _location,
-        uint256 _harvestTime,
+        uint256 _quantityProduced,
         uint256 _price,
         string memory _additionalInfo
     ) public {
@@ -107,7 +121,7 @@ contract AgriSupplyChain {
             id: cropCount,
             name: _name,
             location: _location,
-            harvestTime: _harvestTime,
+            quantityProduced: _quantityProduced,
             price: _price,
             additionalInfo: _additionalInfo,
             farmer: msg.sender
@@ -115,22 +129,31 @@ contract AgriSupplyChain {
         emit CropRegistered(cropCount, _name, msg.sender);
     }
 
+    // Define the event
+    event CropSoldOut(address indexed farmer, string cropName, uint256 id);
+
     // Purchase Crop
-    function buyCrop(uint256 _id, uint256 _quantity) public payable {
-        require(customers[msg.sender].isRegistered, "Only registered customers can buy crops.");
+       function buyCrop(uint256 _id, uint256 _quantity) public payable onlyCustomer {
         Crop memory crop = crops[_id];
         require(crop.id != 0, "Crop does not exist.");
         require(_quantity > 0, "Quantity must be greater than zero.");
-
         uint256 totalPriceInRupees = crop.price * _quantity;
         uint256 totalPriceInEther = convertRupeesToEther(totalPriceInRupees);
 
+        crops[_id].quantityProduced -= _quantity;
+
+        // Check if quantity is zero and notify the farmer
+        if (crop.quantityProduced == 0) {
+            emit CropSoldOut(crop.farmer, crop.name, crop.id);
+
+        }
+
         require(msg.value >= totalPriceInEther, "Insufficient ETH sent.");
 
-        // Transfer payment to farmer
+        // Transfer payment to the farmer
         payable(crop.farmer).transfer(msg.value);
 
-        // Record transaction
+        // Record the transaction
         Transaction memory txn = Transaction({
             cropId: _id,
             farmer: crop.farmer,

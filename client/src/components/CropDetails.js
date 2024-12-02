@@ -46,7 +46,7 @@ const CropDetails = () => {
             setCrop({
                 ...fetchedCrop,
                 price: parseFloat(fetchedCrop.price).toFixed(2), // Ensure price is a valid number and formatted correctly
-                harvestTime: fetchedCrop.harvestTime.toString() || "N/A",
+                quantityProduced: fetchedCrop.quantityProduced.toString() || "N/A",
             });
 
             setFormData({
@@ -166,7 +166,7 @@ const CropDetails = () => {
                 <p><strong>Name:</strong> {crop.name}</p>
                 <p><strong>Location:</strong> {crop.location}</p>
                 <p><strong>Price:</strong> ₹{crop.price}</p>
-                <p><strong>Quantity Produced:</strong> {crop.harvestTime} Kg(s)</p>
+                <p><strong>Quantity Produced:</strong> {crop.quantityProduced} Kg(s)</p>
                 <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
                 {!formVisible && (
                     <button onClick={handleBuyNow} className="buy-now-btn">

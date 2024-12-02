@@ -46,7 +46,7 @@ const FarmerDashboard = () => {
                             id: Number(crop.id),
                             name: crop.name,
                             location: crop.location,
-                            harvestTime: Number(crop.harvestTime),
+                            quantityProduced: Number(crop.quantityProduced),
                             price: Number(crop.price),
                             additionalInfo: crop.additionalInfo,
                         });
@@ -85,7 +85,7 @@ const FarmerDashboard = () => {
                                 <li key={crop.id}>
                                     <p><strong>Name:</strong> {crop.name}</p>
                                     <p><strong>Location:</strong> {crop.location}</p>
-                                    <p><strong>Harvest Time:</strong> {crop.harvestTime} Month(s)</p>
+                                    <p><strong>Quantity Produced:</strong> {crop.quantityProduced} Kg(s)</p>
                                     <p><strong>Price: ₹</strong>{crop.price} </p>
                                     <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
                                 </li>
