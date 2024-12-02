@@ -77,6 +77,12 @@ const FarmerDashboard = () => {
         <Layout>
             <div className="dashboard-page">
                 <h1>Welcome strong Farmer!🧑🏻‍🌾</h1>
+                <button className="dashboard-button" onClick={() => navigate("/crop-registration")}>
+                    Register a Crop
+                </button>
+                <button className="dashboard-logout" onClick={handleLogout}>
+                    Logout
+                </button>
                 <div className="dashboard-info">
                     <p><strong>Name:</strong> {name}</p>
                     <p><strong>Wallet Address:</strong> {walletAddress}</p>
@@ -97,12 +103,8 @@ const FarmerDashboard = () => {
                         )}
                     </ol>
                 </div>
-                <button className="dashboard-button" onClick={() => navigate("/crop-registration")}>
-                    Register a Crop
-                </button>
-                <button className="dashboard-logout" onClick={handleLogout}>
-                    Logout
-                </button>
+                
+                
             </div>
         </Layout>
     );
