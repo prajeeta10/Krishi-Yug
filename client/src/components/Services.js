@@ -84,23 +84,23 @@ const Services = () => {
                 </Grid>
                 <Grid item xs={12} md={6} lg={4}>
                     <Paper style={styles.serviceCard}>
-                        <div style={styles.serviceIcon}>🤝</div>
-                        <Typography variant="h5" style={styles.serviceTitle}>
-                            Community Building
-                        </Typography>
-                        <Typography style={styles.serviceDescription}>
-                            Our platform connects farmers and customers, fostering a collaborative environment for mutual growth.
-                        </Typography>
-                    </Paper>
-                </Grid>
-                <Grid item xs={12} md={6} lg={4}>
-                    <Paper style={styles.serviceCard}>
                         <div style={styles.serviceIcon}>🔗</div>
                         <Typography variant="h5" style={styles.serviceTitle}>
                             Supply Chain Transparency
                         </Typography>
                         <Typography style={styles.serviceDescription}>
                             With blockchain technology, we ensure that the entire supply chain is transparent, secure, and trustworthy.
+                        </Typography>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} md={6} lg={4}>
+                    <Paper style={styles.serviceCard}>
+                        <div style={styles.serviceIcon}>🤝</div>
+                        <Typography variant="h5" style={styles.serviceTitle}>
+                            Community Building
+                        </Typography>
+                        <Typography style={styles.serviceDescription}>
+                            Our platform connects farmers and customers, fostering a collaborative environment for mutual growth.
                         </Typography>
                     </Paper>
                 </Grid>

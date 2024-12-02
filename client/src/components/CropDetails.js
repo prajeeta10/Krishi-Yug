@@ -1,4 +1,4 @@
-//CropDetails.js:
+// CropDetails.js:
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Web3 from "web3";
@@ -7,6 +7,7 @@ import "../styles/Dashboard.css";
 import Layout from './Layout';
 
 const INR_TO_ETHER_RATE = 315726;
+
 const CropDetails = () => {
     const [crop, setCrop] = useState({});
     const [farmerInfo, setFarmerInfo] = useState({});
@@ -50,9 +51,8 @@ const CropDetails = () => {
             const fetchedCrop = await contract.methods.getCrop(id).call();
             console.log("Fetched Crop Data: ", fetchedCrop);  // Log to inspect the fetched crop data
     
-            // Fetch the farmer's name using the farmer's address
             const farmerDetails = await contract.methods.farmers(fetchedCrop.farmer).call();
-            const farmerName = farmerDetails.name || "Unknown Farmer"; // Use "Unknown Farmer" if the name is not found
+            const farmerName = farmerDetails.name || "Unknown Farmer";
     
             setCrop({
                 ...fetchedCrop,
@@ -75,8 +75,6 @@ const CropDetails = () => {
             alert(error.message || "Error loading crop details.");
         }
     };
-    
-    
 
     const handleBuyNow = () => {
         if (crop.quantityProduced <= 0) {
@@ -99,12 +97,11 @@ const CropDetails = () => {
             [name]: updatedValue,
         };
 
-        // Calculate total price and total price in Ether when quantity or price per unit changes
         if (updatedFormData.quantity > 0 && updatedFormData.pricePerUnit > 0) {
             const totalPrice = updatedFormData.pricePerUnit * updatedFormData.quantity;
             const totalPriceInEther = totalPrice / INR_TO_ETHER_RATE;
             updatedFormData.totalPrice = totalPrice.toFixed(2);
-            updatedFormData.totalPriceInEther = totalPriceInEther.toFixed(8); // Adjust precision as needed
+            updatedFormData.totalPriceInEther = totalPriceInEther.toFixed(8);
         }
 
         setFormData(updatedFormData);
@@ -130,7 +127,6 @@ const CropDetails = () => {
 
             const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
 
-            // Send transaction
             const tx = await contract.methods.buyCrop(id, formData.quantity).send({
                 from: accounts[0],
                 value: web3.utils.toWei(formData.totalPriceInEther, "ether"),
@@ -267,9 +263,9 @@ const CropDetails = () => {
                         </div>
                         <div className="form-buttons">
                             <button onClick={handleCancelPurchase} className="cancel-btn">
-                                Cancel Purchase
+                                Cancel
                             </button>
-                            <button onClick={handleSubmit} className="confirm-btn">
+                            <button onClick={handleSubmit} className="submit-btn" disabled={!formData.termsAccepted}>
                                 Confirm Purchase
                             </button>
                         </div>
@@ -277,7 +273,7 @@ const CropDetails = () => {
                 )}
                 {purchaseStatus && (
                     <p className="status-message">
-                        {purchaseStatus === 'Purchase successful.' ? 'Purchase Successful!' : 'Purchase Failed. Please try again.'}
+                        {purchaseStatus}
                     </p>
                 )}
                 <button onClick={() => navigate("/customer-dashboard")}>

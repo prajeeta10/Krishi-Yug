@@ -100,7 +100,7 @@ const Layout = ({ children }) => {
             >
                 <Typography variant="body1">
                     © {new Date().getFullYear()} Krishi Yug:
-                    A Service to Farmers by Prajeeta❤️
+                    A Service to the Farmers by Prajeeta❤️
                 </Typography>
                 <Box
                     style={{

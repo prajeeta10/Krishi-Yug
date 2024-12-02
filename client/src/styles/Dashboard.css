@@ -160,9 +160,7 @@
     max-width: 800px;
     margin: 40px auto;
     padding: 20px;
-    background-color: #ffffff; /* Light yellow-green */
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color:#e8f5e9; /* Light yellow-green */   
     font-family: 'Arial', sans-serif;
     text-align: left;
 }
@@ -243,9 +241,7 @@ body {
 
 .crop-details-page {
     padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #e0fbe2;
     max-width: 800px;
     margin: 0 auto;
 }
