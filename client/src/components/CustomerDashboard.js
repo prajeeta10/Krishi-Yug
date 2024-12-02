@@ -5,11 +5,14 @@ import { useNavigate } from "react-router-dom"; // Add this import
 import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
 import "../styles/Dashboard.css";
 import Layout from './Layout';
+import useContractEvents from '../hooks/useContractEvents';
+
 
 const CustomerDashboard = () => {
     const [walletAddress, setWalletAddress] = useState("");
     const [crops, setCrops] = useState([]);
     const navigate = useNavigate(); // Initialize navigate
+    useContractEvents();
 
     const connectWallet = async () => {
         try {

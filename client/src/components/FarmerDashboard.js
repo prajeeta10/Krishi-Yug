@@ -5,6 +5,7 @@ import Web3 from "web3";
 import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
 import "../styles/Dashboard.css";
 import Layout from './Layout';
+import useContractEvents from '../hooks/useContractEvents';
 
 const FarmerDashboard = () => {
     const [name, setName] = useState("");
@@ -12,6 +13,7 @@ const FarmerDashboard = () => {
     const [lastLogin, setLastLogin] = useState(null);
     const [crops, setCrops] = useState([]);
     const navigate = useNavigate();
+    useContractEvents();
 
     const loadFarmerData = async () => {
         try {

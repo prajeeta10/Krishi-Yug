@@ -1,9 +1,7 @@
-//AgriSupplyChain.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
 contract AgriSupplyChain {
-    // Farmer Structure
     struct Farmer {
         address walletAddress;
         string username;
@@ -13,7 +11,6 @@ contract AgriSupplyChain {
         uint256 lastLogin;
     }
 
-    // Customer Structure
     struct Customer {
         address walletAddress;
         string username;
@@ -23,18 +20,16 @@ contract AgriSupplyChain {
         uint256 lastLogin;
     }
 
-    // Crop Structure
     struct Crop {
         uint256 id;
         string name;
         string location;
-        uint256 quantityProduced; 
+        uint256 quantityProduced;
         uint256 price; // Price in rupees
         string additionalInfo;
         address farmer; // Owner of the crop
     }
 
-    // Transaction Structure
     struct Transaction {
         uint256 cropId;
         address farmer;
@@ -43,7 +38,6 @@ contract AgriSupplyChain {
         uint256 timestamp;
     }
 
-    // State Variables
     mapping(address => Farmer) public farmers;
     mapping(address => Customer) public customers;
     mapping(uint256 => Crop) public crops;
@@ -51,26 +45,24 @@ contract AgriSupplyChain {
     mapping(address => Transaction[]) public customerTransactions;
     uint256 public cropCount;
 
-    // Events
     event FarmerRegistered(address indexed farmer, string name);
     event CustomerRegistered(address indexed customer, string name);
     event CropRegistered(uint256 indexed id, string name, address indexed farmer);
     event CropPurchased(uint256 indexed id, address indexed customer, address indexed farmer, uint256 amount);
+    event CropSoldOut(address indexed farmer, string cropName, uint256 id);
+    event FarmerLoggedIn(address indexed farmer, uint256 timestamp);
+    event CustomerLoggedIn(address indexed customer, uint256 timestamp);
 
-
-    // Modifier to check if the sender is a registered farmer
     modifier onlyFarmer() {
         require(farmers[msg.sender].isRegistered, "Only registered farmers can execute this.");
         _;
     }
 
-    // Modifier to check if the sender is a registered customer
     modifier onlyCustomer() {
         require(customers[msg.sender].isRegistered, "Only registered customers can execute this.");
         _;
     }
 
-    // Register Farmer
     function registerFarmer(
         string memory _username,
         string memory _password,
@@ -88,8 +80,13 @@ contract AgriSupplyChain {
         emit FarmerRegistered(msg.sender, _name);
     }
 
+    function loginFarmer(string memory _username, string memory _password) public onlyFarmer {
+        require(keccak256(abi.encodePacked(farmers[msg.sender].username)) == keccak256(abi.encodePacked(_username)), "Invalid username.");
+        require(keccak256(abi.encodePacked(farmers[msg.sender].password)) == keccak256(abi.encodePacked(_password)), "Invalid password.");
+        farmers[msg.sender].lastLogin = block.timestamp;
+        emit FarmerLoggedIn(msg.sender, block.timestamp);
+    }
 
-    // Register Customer
     function registerCustomer(
         string memory _username,
         string memory _password,
@@ -107,15 +104,20 @@ contract AgriSupplyChain {
         emit CustomerRegistered(msg.sender, _name);
     }
 
-    // Register Crop
+    function loginCustomer(string memory _username, string memory _password) public onlyCustomer {
+        require(keccak256(abi.encodePacked(customers[msg.sender].username)) == keccak256(abi.encodePacked(_username)), "Invalid username.");
+        require(keccak256(abi.encodePacked(customers[msg.sender].password)) == keccak256(abi.encodePacked(_password)), "Invalid password.");
+        customers[msg.sender].lastLogin = block.timestamp;
+        emit CustomerLoggedIn(msg.sender, block.timestamp);
+    }
+
     function registerCrop(
         string memory _name,
         string memory _location,
         uint256 _quantityProduced,
         uint256 _price,
         string memory _additionalInfo
-    ) public {
-        require(farmers[msg.sender].isRegistered, "Only registered farmers can add crops.");
+    ) public onlyFarmer {
         cropCount++;
         crops[cropCount] = Crop({
             id: cropCount,
@@ -129,31 +131,48 @@ contract AgriSupplyChain {
         emit CropRegistered(cropCount, _name, msg.sender);
     }
 
-    // Define the event
-    event CropSoldOut(address indexed farmer, string cropName, uint256 id);
+    function getCrop(uint256 _id) public view returns (
+        uint256 id,
+        string memory name,
+        string memory location,
+        uint256 quantityProduced,
+        uint256 price,
+        string memory additionalInfo,
+        address farmer
+    ) {
+        Crop memory crop = crops[_id];
+        require(crop.id != 0, "Crop does not exist.");
+        return (
+            crop.id,
+            crop.name,
+            crop.location,
+            crop.quantityProduced,
+            crop.price,
+            crop.additionalInfo,
+            crop.farmer
+        );
+    }
 
-    // Purchase Crop
-       function buyCrop(uint256 _id, uint256 _quantity) public payable onlyCustomer {
+    function buyCrop(uint256 _id, uint256 _quantity) public payable onlyCustomer {
         Crop memory crop = crops[_id];
         require(crop.id != 0, "Crop does not exist.");
         require(_quantity > 0, "Quantity must be greater than zero.");
+        require(crop.quantityProduced >= _quantity, "Not enough quantity available.");
+
         uint256 totalPriceInRupees = crop.price * _quantity;
         uint256 totalPriceInEther = convertRupeesToEther(totalPriceInRupees);
 
-        crops[_id].quantityProduced -= _quantity;
-
-        // Check if quantity is zero and notify the farmer
-        if (crop.quantityProduced == 0) {
-            emit CropSoldOut(crop.farmer, crop.name, crop.id);
-
-        }
-
         require(msg.value >= totalPriceInEther, "Insufficient ETH sent.");
 
-        // Transfer payment to the farmer
-        payable(crop.farmer).transfer(msg.value);
+        crops[_id].quantityProduced -= _quantity;
 
-        // Record the transaction
+        if (crops[_id].quantityProduced == 0) {
+            emit CropSoldOut(crop.farmer, crop.name, crop.id);
+        }
+
+        (bool success, ) = crop.farmer.call{value: msg.value}("");
+        require(success, "Payment to farmer failed.");
+
         Transaction memory txn = Transaction({
             cropId: _id,
             farmer: crop.farmer,
@@ -167,18 +186,15 @@ contract AgriSupplyChain {
         emit CropPurchased(_id, msg.sender, crop.farmer, msg.value);
     }
 
-    // Utility: Convert Rupees to Ether
     function convertRupeesToEther(uint256 rupees) public pure returns (uint256) {
-        uint256 etherRate = 80000; // Example conversion rate: 1 ETH = 80,000 INR
+        uint256 etherRate = 80000;
         return rupees * 1 ether / etherRate;
     }
 
-    // View Farmer Transactions
     function getFarmerTransactions() public view returns (Transaction[] memory) {
         return farmerTransactions[msg.sender];
     }
 
-    // View Customer Transactions
     function getCustomerTransactions() public view returns (Transaction[] memory) {
         return customerTransactions[msg.sender];
     }

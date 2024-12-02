@@ -1,3 +1,4 @@
+//CropDetails.js:
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Web3 from "web3";
@@ -5,10 +6,10 @@ import AgriSupplyChain from "../contracts/AgriSupplyChain.json";
 import "../styles/Dashboard.css";
 import Layout from './Layout';
 
-const INR_TO_ETHER_RATE = 315726; // Example conversion rate: 1 Ether = 1,50,000 INR
-
+const INR_TO_ETHER_RATE = 315726;
 const CropDetails = () => {
     const [crop, setCrop] = useState({});
+    const [farmerInfo, setFarmerInfo] = useState({});
     const [formVisible, setFormVisible] = useState(false);
     const [purchaseStatus, setPurchaseStatus] = useState(null);
     const [formData, setFormData] = useState({
@@ -19,19 +20,107 @@ const CropDetails = () => {
         quantity: 0,
         pricePerUnit: 0,
         totalPrice: 0,
+        totalPriceInEther: 0,
         termsAccepted: false,
     });
 
     const navigate = useNavigate();
     const { id } = useParams();
 
+    useEffect(() => {
+        loadCropDetails();
+    }, [id]);
+    
     const loadCropDetails = async () => {
         try {
             if (!window.ethereum) {
                 throw new Error("MetaMask not detected. Please install it.");
             }
-
+    
             const web3 = new Web3(window.ethereum);
+            const networkId = await web3.eth.net.getId();
+            const deployedNetwork = AgriSupplyChain.networks[networkId];
+    
+            if (!deployedNetwork) {
+                throw new Error("Smart contract not deployed on this network.");
+            }
+    
+            const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
+    
+            const fetchedCrop = await contract.methods.getCrop(id).call();
+            console.log("Fetched Crop Data: ", fetchedCrop);  // Log to inspect the fetched crop data
+    
+            // Fetch the farmer's name using the farmer's address
+            const farmerDetails = await contract.methods.farmers(fetchedCrop.farmer).call();
+            const farmerName = farmerDetails.name || "Unknown Farmer"; // Use "Unknown Farmer" if the name is not found
+    
+            setCrop({
+                ...fetchedCrop,
+                price: parseFloat(fetchedCrop.price).toFixed(2),
+                quantityProduced: fetchedCrop.quantityProduced.toString() || "N/A",
+            });
+    
+            setFarmerInfo({
+                name: farmerName,
+                walletAddress: fetchedCrop.farmer,
+            });
+    
+            setFormData({
+                ...formData,
+                cropName: fetchedCrop.name,
+                pricePerUnit: parseFloat(fetchedCrop.price).toFixed(2),
+            });
+        } catch (error) {
+            console.error("Error loading crop details:", error);
+            alert(error.message || "Error loading crop details.");
+        }
+    };
+    
+    
+
+    const handleBuyNow = () => {
+        if (crop.quantityProduced <= 0) {
+            alert("This crop has been sold out. No more purchases can be made.");
+            return;
+        }
+        setFormVisible(true);
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
+        let updatedValue = value;
+        if (name === "quantity" || name === "pricePerUnit") {
+            updatedValue = parseFloat(value) || 0;
+        }
+
+        const updatedFormData = {
+            ...formData,
+            [name]: updatedValue,
+        };
+
+        // Calculate total price and total price in Ether when quantity or price per unit changes
+        if (updatedFormData.quantity > 0 && updatedFormData.pricePerUnit > 0) {
+            const totalPrice = updatedFormData.pricePerUnit * updatedFormData.quantity;
+            const totalPriceInEther = totalPrice / INR_TO_ETHER_RATE;
+            updatedFormData.totalPrice = totalPrice.toFixed(2);
+            updatedFormData.totalPriceInEther = totalPriceInEther.toFixed(8); // Adjust precision as needed
+        }
+
+        setFormData(updatedFormData);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!window.ethereum) {
+            alert("MetaMask not detected. Please install it to proceed.");
+            return;
+        }
+
+        try {
+            const web3 = new Web3(window.ethereum);
+            await window.ethereum.request({ method: "eth_requestAccounts" });
+            const accounts = await web3.eth.getAccounts();
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = AgriSupplyChain.networks[networkId];
 
@@ -41,123 +130,27 @@ const CropDetails = () => {
 
             const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
 
-            const fetchedCrop = await contract.methods.getCrop(id).call();
-
-            setCrop({
-                ...fetchedCrop,
-                price: parseFloat(fetchedCrop.price).toFixed(2), // Ensure price is a valid number and formatted correctly
-                quantityProduced: fetchedCrop.quantityProduced.toString() || "N/A",
+            // Send transaction
+            const tx = await contract.methods.buyCrop(id, formData.quantity).send({
+                from: accounts[0],
+                value: web3.utils.toWei(formData.totalPriceInEther, "ether"),
+                gas: 3000000,
             });
 
-            setFormData({
-                ...formData,
-                cropName: fetchedCrop.name,
-                pricePerUnit: parseFloat(fetchedCrop.price).toFixed(2), // Ensure price per unit is correctly set
-            });
+            console.log("Transaction success:", tx);
+            setPurchaseStatus("Purchase successful.");
+            setFormVisible(false);
         } catch (error) {
-            console.error(error);
-            alert(error.message || "Error loading crop details.");
-        }
-    };
-
-    const handleBuyNow = () => {
-        if (window.ethereum) {
-            setFormVisible(true);
-        } else {
-            alert("Please connect your wallet to proceed.");
+            console.error("Detailed error info:", error);
+            alert("Error: " + (error.message || "Unknown error"));
+            setPurchaseStatus("Error: " + error.message);
         }
     };
 
     const handleCancelPurchase = () => {
         setFormVisible(false);
-        setFormData((prevData) => ({
-            ...prevData,
-            customerName: '',
-            contactInfo: '',
-            deliveryAddress: '',
-            quantity: 0,
-            totalPrice: 0,
-            termsAccepted: false,
-        }));
+        setPurchaseStatus(null);
     };
-    
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-
-        // Handle checkbox separately
-        if (name === 'termsAccepted') {
-            setFormData({
-                ...formData,
-                [name]: !formData.termsAccepted,
-            });
-        } else {
-            // Handle numeric fields and auto-calculate total price
-            let updatedValue = value;
-            if (name === 'quantity') {
-                updatedValue = parseInt(value, 10) || 0;
-                const totalPrice = updatedValue * parseFloat(crop.price);
-                const totalPriceInEther = (totalPrice / INR_TO_ETHER_RATE).toFixed(6); // Calculate Ether price
-                setFormData({
-                    ...formData,
-                    [name]: updatedValue,
-                    totalPrice: totalPrice.toFixed(2), // Ensure totalPrice is formatted as a string with 2 decimal places
-                    totalPriceInEther, // Update Ether equivalent
-                });
-            } else {
-                setFormData({
-                    ...formData,
-                    [name]: updatedValue,
-                });
-            }
-        }
-    };
-
-    const handleSubmit = async () => {
-        try {
-            if (!formData.termsAccepted) {
-                alert("You must agree to the terms and conditions to proceed.");
-                return;
-            }
-
-            // Validate price
-            if (isNaN(formData.totalPrice) || parseFloat(formData.totalPrice) <= 0) {
-                alert("Invalid total price. Please check your input.");
-                return;
-            }
-
-            // Payment logic to be implemented here (e.g., interacting with smart contract)
-            const web3 = new Web3(window.ethereum);
-            const accounts = await web3.eth.requestAccounts();
-            const userAccount = accounts[0];
-
-            const networkId = await web3.eth.net.getId();
-            const deployedNetwork = AgriSupplyChain.networks[networkId];
-            const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
-
-            // Convert total price from INR to Ether
-            const priceInEther = web3.utils.toWei(formData.totalPrice.toString(), 'ether');
-
-            // Call smart contract method to confirm purchase (replace with actual function)
-            await contract.methods.confirmPurchase(
-                crop.id,
-                formData.customerName,
-                formData.contactInfo,
-                formData.deliveryAddress,
-                formData.quantity
-            ).send({ from: userAccount, value: priceInEther });
-
-            setPurchaseStatus('Success');
-            setFormVisible(false);
-        } catch (error) {
-            console.error("Error during purchase:", error);
-            setPurchaseStatus('Failed');
-        }
-    };
-
-    useEffect(() => {
-        loadCropDetails();
-    }, [id]);
 
     return (
         <Layout>
@@ -167,15 +160,17 @@ const CropDetails = () => {
                 <p><strong>Location:</strong> {crop.location}</p>
                 <p><strong>Price:</strong> ₹{crop.price}</p>
                 <p><strong>Quantity Produced:</strong> {crop.quantityProduced} Kg(s)</p>
+                <p><strong>Farmer Name:</strong> {farmerInfo.name}</p>
+                <p><strong>Farmer Wallet:</strong> {farmerInfo.walletAddress}</p>
                 <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
-                {!formVisible && (
+                {!formVisible && crop.quantityProduced > 0 && (
                     <button onClick={handleBuyNow} className="buy-now-btn">
                         Buy Now
                     </button>
                 )}
                 {formVisible && (
                     <div className="purchase-form">
-                        <h2>Purchase Form</h2>
+                        <h2><center>Purchase {formData.cropName}</center></h2>
                         <div className="form-group">
                             <label>Customer Name:</label>
                             <input
@@ -217,6 +212,14 @@ const CropDetails = () => {
                             />
                         </div>
                         <div className="form-group">
+                            <label>Crop Cultivator:</label>
+                            <input
+                                type="text"
+                                value={farmerInfo.name}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
                             <label>Quantity (kg):</label>
                             <input
                                 type="number"
@@ -244,6 +247,14 @@ const CropDetails = () => {
                             />
                         </div>
                         <div className="form-group">
+                            <label>Paying To (Wallet Address):</label>
+                            <input
+                                type="text"
+                                value={farmerInfo.walletAddress}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
                             <label>
                                 <input
                                     type="checkbox"
@@ -266,7 +277,7 @@ const CropDetails = () => {
                 )}
                 {purchaseStatus && (
                     <p className="status-message">
-                        {purchaseStatus === 'Success' ? 'Purchase Successful!' : 'Purchase Failed. Please try again.'}
+                        {purchaseStatus === 'Purchase successful.' ? 'Purchase Successful!' : 'Purchase Failed. Please try again.'}
                     </p>
                 )}
                 <button onClick={() => navigate("/customer-dashboard")}>
