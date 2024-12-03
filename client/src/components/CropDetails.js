@@ -146,7 +146,7 @@ const CropDetails = () => {
             });
     
             console.log("Transaction success:", tx);
-            setPurchaseStatus("Purchase successful.");
+            setPurchaseStatus("Purchase successful! View the receipt on dashboard");
             setFormVisible(false);
         } catch (error) {
             console.error("Detailed error info:", error);
@@ -172,7 +172,13 @@ const CropDetails = () => {
                 <p><strong>Quantity Produced:</strong> {crop.quantityProduced} Kg(s)</p>
                 <p><strong>Farmer Name:</strong> {farmerInfo.name}</p>
                 <p><strong>Farmer Wallet:</strong> {farmerInfo.walletAddress}</p>
-                <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>
+                <p><strong>Additional Info:</strong> {crop.additionalInfo}</p>  
+                {purchaseStatus && (
+                    <center>
+                    <p className="status-message">
+                        {purchaseStatus}
+                    </p></center>
+                )}
                 {!formVisible && crop.quantityProduced > 0 && (
                     <button onClick={handleBuyNow} className="buy-now-btn">
                         Buy Now
@@ -284,11 +290,6 @@ const CropDetails = () => {
                             </button>
                         </div>
                     </div>
-                )}
-                {purchaseStatus && (
-                    <p className="status-message">
-                        {purchaseStatus}
-                    </p>
                 )}
                 <button onClick={() => navigate("/customer-dashboard")}>
                     Back to Dashboard

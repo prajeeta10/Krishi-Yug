@@ -359,7 +359,11 @@ button:disabled {
 
 /* Status Message */
 p.status-message {
-    font-size: 16px;
-    color: #2ecc71;
+    font-size: 18px;
+    color: #047e2c;
     margin-top: 20px;
+    border: 5px solid #027528 ;
+    border-radius: 20px;
+    width: 470px;
+    padding: 10px 20px;
 }
