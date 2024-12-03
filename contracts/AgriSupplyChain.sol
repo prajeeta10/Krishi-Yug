@@ -1,3 +1,4 @@
+//AgriSupplyChain.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
@@ -177,37 +178,64 @@ contract AgriSupplyChain {
         );
     }
 
-    function buyCrop(uint256 _id, uint256 _quantity) public payable onlyCustomer {
-        Crop storage crop = crops[_id];
-        require(crop.id != 0, "Crop does not exist.");
-        require(_quantity > 0, "Quantity must be greater than zero.");
-        require(crop.quantityProduced >= _quantity, "Not enough quantity available.");
+    // Function to calculate the price based on quantity and crop ID
+function calculatePrice(uint256 cropId, uint256 quantity) public view returns (uint256) {
+    // Check if the quantity requested is available in the crop
+    require(crops[cropId].quantityProduced >= quantity, "Insufficient quantity available.");
 
-        uint256 totalPriceInRupees = crop.price * _quantity;
-        uint256 totalPriceInEther = convertRupeesToEther(totalPriceInRupees);
-        require(msg.value >= totalPriceInEther, "Insufficient ETH sent.");
+    // Calculate the total price in wei
+    uint256 totalPrice = crops[cropId].price * quantity;
+    return totalPrice;
+}
 
-        crop.quantityProduced -= _quantity;
+// Function to buy a crop
+function buyCrop(uint256 _id, uint256 _quantity) public payable onlyCustomer {
+    // Calculate the price for the requested crop and quantity
+    uint256 price = calculatePrice(_id, _quantity);
+    uint256 receivedValue = msg.value;
 
-        if (crop.quantityProduced == 0) {
-            emit CropSoldOut(crop.farmer, crop.name, crop.id);
-        }
+    // Ensure that the amount of ETH sent is sufficient for the total price
+    require(receivedValue >= price, "Insufficient ETH sent.");
 
-        (bool success, ) = crop.farmer.call{value: msg.value}("");
-        require(success, "Payment to farmer failed.");
-
-        Transaction memory txn = Transaction({
-            cropId: _id,
-            farmer: crop.farmer,
-            customer: msg.sender,
-            amount: msg.value,
-            timestamp: block.timestamp
-        });
-        farmerTransactions[crop.farmer].push(txn);
-        customerTransactions[msg.sender].push(txn);
-
-        emit CropPurchased(_id, msg.sender, crop.farmer, msg.value);
+    // Refund any excess amount if it is greater than the price
+    if (receivedValue > price) {
+        payable(msg.sender).transfer(receivedValue - price);
     }
+
+    // Verify the crop exists and other conditions
+    Crop storage crop = crops[_id];
+    require(crop.id != 0, "Crop does not exist.");
+    require(_quantity > 0, "Quantity must be greater than zero.");
+    require(crop.quantityProduced >= _quantity, "Not enough quantity available.");
+
+    // Update the quantity of the crop after purchase
+    crop.quantityProduced -= _quantity;
+
+    // If the quantity reaches zero, emit the CropSoldOut event
+    if (crop.quantityProduced == 0) {
+        emit CropSoldOut(crop.farmer, crop.name, crop.id);
+    }
+
+    // Transfer the received value to the farmer
+    (bool success, ) = crop.farmer.call{value: price}("");
+    require(success, "Payment to farmer failed.");
+
+    // Log the transaction for both farmer and customer
+    Transaction memory txn = Transaction({
+        cropId: _id,
+        farmer: crop.farmer,
+        customer: msg.sender,
+        amount: price,
+        timestamp: block.timestamp
+    });
+    farmerTransactions[crop.farmer].push(txn);
+    customerTransactions[msg.sender].push(txn);
+
+    // Emit event to indicate a successful crop purchase
+    emit CropPurchased(_id, msg.sender, crop.farmer, price);
+}
+
+
 
     function setEtherRate(uint256 _newRate) public onlyAdmin {
         require(_newRate > 0, "Conversion rate must be positive.");
@@ -215,8 +243,9 @@ contract AgriSupplyChain {
     }
 
     function convertRupeesToEther(uint256 rupees) public view returns (uint256) {
-        return (rupees * 1 ether) / etherRate;
-    }
+    return (rupees * 1 ether) / etherRate; // Define conversionRate (e.g., 100 INR = 1 Ether)
+}
+
 
     function getFarmerTransactions() public view returns (Transaction[] memory) {
         return farmerTransactions[msg.sender];

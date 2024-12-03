@@ -49,8 +49,7 @@ const CropDetails = () => {
             const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
     
             const fetchedCrop = await contract.methods.getCrop(id).call();
-            console.log("Fetched Crop Data: ", fetchedCrop);  // Log to inspect the fetched crop data
-    
+           
             const farmerDetails = await contract.methods.farmers(fetchedCrop.farmer).call();
             const farmerName = farmerDetails.name || "Unknown Farmer";
     
@@ -113,26 +112,39 @@ const CropDetails = () => {
             alert("MetaMask not detected. Please install it to proceed.");
             return;
         }
-
+    
         try {
             const web3 = new Web3(window.ethereum);
             await window.ethereum.request({ method: "eth_requestAccounts" });
             const accounts = await web3.eth.getAccounts();
             const networkId = await web3.eth.net.getId();
             const deployedNetwork = AgriSupplyChain.networks[networkId];
-
+    
             if (!deployedNetwork) {
                 throw new Error("Smart contract not deployed on this network.");
             }
-
+    
             const contract = new web3.eth.Contract(AgriSupplyChain.abi, deployedNetwork.address);
-
+            const valueInWei = web3.utils.toWei(formData.totalPriceInEther.toString(), "ether");
+            const id = crop.id; // Ensure this id is correctly defined
+    
+            console.log("Transaction Parameters:", {
+                id: id,
+                quantity: formData.quantity,
+                from: accounts[0],
+                value: valueInWei,
+            });
+    
+            const estimatedGas = await contract.methods
+                .buyCrop(id, formData.quantity)
+                .estimateGas({ from: accounts[0], value: valueInWei });
+    
             const tx = await contract.methods.buyCrop(id, formData.quantity).send({
                 from: accounts[0],
-                value: web3.utils.toWei(formData.totalPriceInEther, "ether"),
-                gas: 3000000,
+                value: valueInWei,
+                gas: estimatedGas,
             });
-
+    
             console.log("Transaction success:", tx);
             setPurchaseStatus("Purchase successful.");
             setFormVisible(false);
@@ -142,6 +154,8 @@ const CropDetails = () => {
             setPurchaseStatus("Error: " + error.message);
         }
     };
+    
+    
 
     const handleCancelPurchase = () => {
         setFormVisible(false);
