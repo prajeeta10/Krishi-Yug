@@ -254,4 +254,26 @@ function buyCrop(uint256 _id, uint256 _quantity) public payable onlyCustomer {
     function getCustomerTransactions() public view returns (Transaction[] memory) {
         return customerTransactions[msg.sender];
     }
+    // Define a struct for order details
+    struct Order {
+        address customer;
+        string customerName;
+        string customerAddress;
+        string customerContact;
+        string cropName;
+        string harvestLocation;
+        string deliveredTo;
+        uint pricePerUnit;
+        uint quantityPurchased;
+        uint expectedDeliveryDate;
+    }
+
+    // Map cropId to an array of orders
+    mapping(uint => Order[]) public orders;
+
+    // Function to get orders by cropId
+    function getOrders(uint cropId) public view returns (Order[] memory) {
+        return orders[cropId];
+    }
+
 }

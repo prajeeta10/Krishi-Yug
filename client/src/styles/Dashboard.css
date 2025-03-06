@@ -75,24 +75,28 @@
     color: #2e7d32; /* Darker green for text */
 }
 
-.dashboard-button, .dashboard-logout {
+.dashboard-logout {
     padding: 12px 24px;
     border-radius: 8px;
     border: none;
     font-size: 1rem;
     cursor: pointer;
-    margin: 10px;
+    margin-top: 20px;
+    margin-left: 1000px;
     transition: all 0.3s ease-in-out;
 }
+
 
 .dashboard-button {
     background-color: #4caf50; /* Vibrant green */
     color: white;
+    
 }
 
 .dashboard-logout {
     background-color: #d32f2f; /* Red for logout */
     color: white;
+    margin-top: -40px;
 }
 
 .dashboard-button:hover {
@@ -101,7 +105,7 @@
 }
 
 .dashboard-logout:hover {
-    background-color: #c2185b; /* Darker red */
+    background-color: #b30000; /* Darker red */
     transform: scale(1.05);
 }
 
@@ -366,4 +370,84 @@ p.status-message {
     border-radius: 20px;
     width: 470px;
     padding: 10px 20px;
+}
+.top-left {
+    position: absolute;
+    top: 70px; /* Increased space from the top */
+    left: 20px;
+    display: flex;
+    gap: 20px;
+}
+
+.top-right {
+    position: absolute;
+    top: 50px; /* Increased space from the top */
+    right: 20px;
+}
+
+.crop-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.crop-card {
+    border: 5px solid #45a049;
+    border-radius: 10px;
+    width: 300px;
+    margin: 50px;
+    padding: 20px;
+    background-color: #ffffff; /* White background for crops */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+}
+
+.crop-card:hover {
+    transform: scale(1.05);
+}
+
+.crop-card h3 {
+    margin-bottom: 8px;
+    color: #4caf50; /* Green theme */
+}
+
+.crop-card p {
+    margin: 4px 0;
+}
+
+.track-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 5px solid #247027;
+    cursor: pointer;
+}
+
+.track-button:hover {
+    background-color: #297e2d;
+}
+
+.tracking-dropdown {
+    margin-top: 12px;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.print-receipt-button {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.print-receipt-button:hover {
+    background-color: #0b7dda;
 }

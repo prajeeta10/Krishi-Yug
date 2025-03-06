@@ -11,6 +11,7 @@ import CustomerRegister from "./components/CustomerRegister";
 import CustomerDashboard from "./components/CustomerDashboard";
 import CropDetails from "./components/CropDetails";
 import Services from "./components/Services"; // Import the Services component
+import TrackCrops from "./components/TrackCrops";
 
 const App = () => {
     return (
@@ -37,6 +38,8 @@ const App = () => {
                 {/* Customer Dashboard and Crop Details */}
                 <Route path="/customer-dashboard" element={<CustomerDashboard />} />
                 <Route path="/crop-details/:id" element={<CropDetails />} />
+
+                <Route path="/track-crops" element={<TrackCrops />} />
 
                 {/* Services Page */}
                 <Route path="/services" element={<Services />} /> {/* Add the route for services */}

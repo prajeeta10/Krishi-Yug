@@ -90,6 +90,26 @@ const CustomerDashboard = () => {
             <div className="dashboard-page">
                 <h1>Welcome Dear Customer!🤵🏻‍♂️</h1>
                 <h2>What would you like to buy today?</h2>
+                <button className="track-button" onClick={() => navigate("/track-crops", {
+                state: {
+                    trackingDetails: {
+                        customerName: "John Doe",
+                        customerAddress: "123 Street, City",
+                        customerContact: "9876543210",
+                        cropName: "Wheat",
+                        harvestLocation: "Farm A",
+                        deliveredTo: "Warehouse B",
+                        pricePerUnit: 50,
+                        quantityPurchased: 10,
+                        expectedDeliveryDate: "2024-12-15",
+                    },
+                },
+            })
+    }
+>
+    Track Your Crops
+</button>
+
                 <br></br>
                 <button className="wallet-btn" onClick={connectWallet}>
                     {walletAddress ? `Connected: ${walletAddress}` : "Connect Wallet"}
